@@ -643,9 +643,9 @@ function spawnWord(){
   const areaH = wordZone.offsetHeight;
   if(areaW === 0 || areaH === 0) return;
 
-  /* Spawn from pastor's mouth area: ~50% x, ~48% y */
-  const spawnX = areaW * 0.5 + rand(-areaW*0.05, areaW*0.05);
-  const spawnY = areaH * 0.48;
+/* Spawn from pastor's mouth — fixed origin point */
+const spawnX = areaW * 0.5;
+const spawnY = areaH * 0.43;
 
   const el = document.createElement('div');
   el.className = 'word-node' + (isBonus ? ' bonus' : '');
@@ -653,8 +653,8 @@ function spawnWord(){
   wordZone.appendChild(el);
 
   /* Measure width, clamp x */
-  const elW = el.offsetWidth;
-  const x = Math.max(0, Math.min(areaW - elW, spawnX - elW/2));
+const elW = el.offsetWidth;
+const x = spawnX - elW / 2;
 
   el.style.left = x + 'px';
   el.style.top = spawnY + 'px';
