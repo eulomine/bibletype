@@ -284,6 +284,31 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
   background:transparent;color:var(--color-danger);font-size:12px;cursor:pointer;
 }
 
+/* ===== My Rank Box ===== */
+.my-rank-box{
+  margin-top:12px;
+  padding:12px;
+  border-radius:var(--radius);
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,215,0,.25);
+  text-align:center;
+  font-size:14px;
+  color:var(--color-text);
+}
+.my-rank-box .label{
+  font-size:12px;
+  color:var(--color-muted);
+  margin-bottom:4px;
+}
+.my-rank-box .value{
+  font-size:22px;
+  font-weight:900;
+  color:var(--color-accent);
+}
+.rank-table tr.mine{
+  background:rgba(255,215,0,.10);
+}
+
 /* ===== Screen shake ===== */
 @keyframes shake{
   0%,100%{transform:translateX(0);}
@@ -408,6 +433,10 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
       <tbody id="rkBody"></tbody>
     </table>
     <div class="rank-clear"><button id="rkClear">🗑 랭킹 초기화</button></div>
+    <div id="myRankBox" class="my-rank-box" style="display:none;">
+      <div class="label">내 순위</div>
+      <div class="value">-</div>
+    </div>
     <div class="modal-btns" style="margin-top:12px;">
       <button class="btn-secondary" id="rkClose">닫기</button>
     </div>
@@ -526,36 +555,37 @@ const LEVEL_LABELS = {kids:'유년꿈터',elem:'초등꿈터',junior:'소년꿈�
 const $ = s => document.querySelector(s);
 const $$ = s => document.querySelectorAll(s);
 
-const gameArea     = $('#gameArea');
-const wordZone     = $('#wordZone');
-const statusBar    = $('#statusBar');
-const startOverlay = $('#startOverlay');
-const pauseOverlay = $('#pauseOverlay');
-const typingInput  = $('#typingInput');
-const scoreVal     = $('#scoreVal');
-const comboVal     = $('#comboVal');
-const missVal      = $('#missVal');
-const livesVal     = $('#livesVal');
-const timeVal      = $('#timeVal');
-const headerVerse  = $('#headerVerse');
-const verseBanner  = $('#verseBanner');
-const btnStart     = $('#btnStart');
-const btnPause     = $('#btnPause');
-const btnStop      = $('#btnStop');
-const btnRanking   = $('#btnRanking');
-const btnFullscreen= $('#btnFullscreen');
-const btnSound     = $('#btnSound');
-const goModal      = $('#goModal');
-const goStats      = $('#goStats');
-const goMsg        = $('#goMsg');
-const goNick       = $('#goNick');
-const goSave       = $('#goSave');
-const goSkip       = $('#goSkip');
-const rkModal      = $('#rkModal');
-const rkFilter     = $('#rkFilter');
-const rkBody       = $('#rkBody');
-const rkClear      = $('#rkClear');
-const rkClose      = $('#rkClose');
+const gameArea      = $('#gameArea');
+const wordZone      = $('#wordZone');
+const statusBar     = $('#statusBar');
+const startOverlay  = $('#startOverlay');
+const pauseOverlay  = $('#pauseOverlay');
+const typingInput   = $('#typingInput');
+const scoreVal      = $('#scoreVal');
+const comboVal      = $('#comboVal');
+const missVal       = $('#missVal');
+const livesVal      = $('#livesVal');
+const timeVal       = $('#timeVal');
+const headerVerse   = $('#headerVerse');
+const verseBanner   = $('#verseBanner');
+const btnStart      = $('#btnStart');
+const btnPause      = $('#btnPause');
+const btnStop       = $('#btnStop');
+const btnRanking    = $('#btnRanking');
+const btnFullscreen = $('#btnFullscreen');
+const btnSound      = $('#btnSound');
+const goModal       = $('#goModal');
+const goStats       = $('#goStats');
+const goMsg         = $('#goMsg');
+const goNick        = $('#goNick');
+const goSave        = $('#goSave');
+const goSkip        = $('#goSkip');
+const rkModal       = $('#rkModal');
+const rkFilter      = $('#rkFilter');
+const rkBody        = $('#rkBody');
+const rkClear       = $('#rkClear');
+const rkClose       = $('#rkClose');
+const myRankBox     = $('#myRankBox');
 
 /* ===== Game State ===== */
 const S = {
@@ -567,6 +597,8 @@ const S = {
   speedMul:1, soundEnabled:true, lastFrame:0
 };
 
+/* 저장 직후 내 순위 표시용 */
+let lastSavedRankInfo = null;
 
 /* ===== Audio (Web Audio API) ===== */
 let audioCtx = null;
@@ -644,9 +676,9 @@ function spawnWord(){
   const areaH = wordZone.offsetHeight;
   if(areaW === 0 || areaH === 0) return;
 
-/* Spawn from pastor's mouth — fixed origin point */
-const spawnX = areaW * 0.5;
-const spawnY = areaH * 0.43;
+  /* Spawn from pastor's mouth — fixed origin point */
+  const spawnX = areaW * 0.5;
+  const spawnY = areaH * 0.43;
 
   const el = document.createElement('div');
   el.className = 'word-node' + (isBonus ? ' bonus' : '');
@@ -654,8 +686,8 @@ const spawnY = areaH * 0.43;
   wordZone.appendChild(el);
 
   /* Measure width, clamp x */
-const elW = el.offsetWidth;
-const x = spawnX - elW / 2;
+  const elW = el.offsetWidth;
+  const x = spawnX - elW / 2;
 
   el.style.left = x + 'px';
   el.style.top = spawnY + 'px';
@@ -760,7 +792,10 @@ function gameLoop(ts){
 function onInput(){
   const v = typingInput.value.trim();
   S.totalTyped++;
-  if(!v){ typingInput.value = ''; return; }
+  if(!v){
+    typingInput.value = '';
+    return;
+  }
 
   let matched = null;
   for(const w of S.words){
@@ -774,8 +809,12 @@ function onInput(){
     const cfg = DIFF[S.level];
     const comboMul = 1 + Math.floor(S.combo / 5) * 0.5;
     let pts = Math.round(cfg.baseScore * comboMul);
-    if(matched.isBonus){ pts *= cfg.bonusMul; sndBonus(); }
-    else { sndMatch(); }
+    if(matched.isBonus){
+      pts *= cfg.bonusMul;
+      sndBonus();
+    } else {
+      sndMatch();
+    }
     S.score += pts;
     showFloat(matched.x, matched.y, '+' + pts, matched.isBonus ? '#ffd700' : '#2ecc71');
     removeWord(matched, 'matched');
@@ -817,13 +856,24 @@ function initGame(){
   if(S.running) stopGame();
 
   const cfg = DIFF[S.level];
-  S.running = false; S.paused = false;
-  S.score = 0; S.combo = 0; S.maxCombo = 0; S.misses = 0;
-  S.lives = cfg.lives; S.maxLives = cfg.lives;
-  S.wordsCleared = 0; S.bonusCleared = 0;
-  S.totalTyped = 0; S.correctTyped = 0;
-  S.words = []; S.nextId = 0; S.speedMul = 1;
-  S.elapsed = 0; S.pausedTotal = 0; S.lastFrame = 0;
+  S.running = false;
+  S.paused = false;
+  S.score = 0;
+  S.combo = 0;
+  S.maxCombo = 0;
+  S.misses = 0;
+  S.lives = cfg.lives;
+  S.maxLives = cfg.lives;
+  S.wordsCleared = 0;
+  S.bonusCleared = 0;
+  S.totalTyped = 0;
+  S.correctTyped = 0;
+  S.words = [];
+  S.nextId = 0;
+  S.speedMul = 1;
+  S.elapsed = 0;
+  S.pausedTotal = 0;
+  S.lastFrame = 0;
 
   wordZone.innerHTML = '';
   pauseOverlay.classList.remove('visible');
@@ -833,6 +883,7 @@ function initGame(){
   btnStart.disabled = true;
   btnPause.disabled = true;
   btnStop.disabled = true;
+
 
   $$('.diff-btn').forEach(b => b.disabled = true);
   updateUI();
@@ -852,17 +903,17 @@ function initGame(){
   });
 }
 
-
 /* ===== Pause ===== */
 function pauseGame(){
   if(!S.running) return;
+
   if(!S.paused){
     S.paused = true;
     S.pauseStart = performance.now();
     pauseOverlay.classList.add('visible');
     typingInput.disabled = true;
     btnPause.textContent = '▶ 계속';
-} else {
+  } else {
     S.pausedTotal += performance.now() - S.pauseStart;
     S.paused = false;
     S.lastFrame = performance.now();
@@ -875,18 +926,33 @@ function pauseGame(){
 
 /* ===== Stop ===== */
 function stopGame(){
-  S.running = false; S.paused = false;
-  if(S.spawnTimer){ clearInterval(S.spawnTimer); S.spawnTimer = null; }
-  if(S.animFrame){ cancelAnimationFrame(S.animFrame); S.animFrame = null; }
+  S.running = false;
+  S.paused = false;
+
+  if(S.spawnTimer){
+    clearInterval(S.spawnTimer);
+    S.spawnTimer = null;
+  }
+  if(S.animFrame){
+    cancelAnimationFrame(S.animFrame);
+    S.animFrame = null;
+  }
+
   wordZone.innerHTML = '';
   S.words = [];
   startOverlay.classList.remove('hidden');
+  startOverlay.querySelector('.big-text').textContent = '✝ 말씀 타이핑 ✝';
+  startOverlay.querySelector('.small-text').textContent = '오른쪽에서 난이도를 선택하고 시작하세요';
   pauseOverlay.classList.remove('visible');
-  typingInput.disabled = true; typingInput.value = '';
+  typingInput.disabled = true;
+  typingInput.value = '';
+
   document.body.classList.remove('game-running');
   btnStart.disabled = false;
-  btnPause.disabled = true; btnPause.textContent = '⏸ 일시정지';
+  btnPause.disabled = true;
+  btnPause.textContent = '⏸ 일시정지';
   btnStop.disabled = true;
+
 
   $$('.diff-btn').forEach(b => b.disabled = false);
   updateUI();
@@ -894,9 +960,18 @@ function stopGame(){
 
 /* ===== End Game ===== */
 function endGame(){
-  S.running = false; S.paused = false;
-  if(S.spawnTimer){ clearInterval(S.spawnTimer); S.spawnTimer = null; }
-  if(S.animFrame){ cancelAnimationFrame(S.animFrame); S.animFrame = null; }
+  S.running = false;
+  S.paused = false;
+
+  if(S.spawnTimer){
+    clearInterval(S.spawnTimer);
+    S.spawnTimer = null;
+  }
+  if(S.animFrame){
+    cancelAnimationFrame(S.animFrame);
+    S.animFrame = null;
+  }
+
   typingInput.disabled = true;
   sndGameOver();
 
@@ -930,11 +1005,50 @@ function endGame(){
 const RK_KEY = 'church_typing_rankings';
 
 function loadLocalRanks(){
-  try{ return JSON.parse(localStorage.getItem(RK_KEY)) || {}; }
-  catch(e){ return {}; }
+  try{
+    return JSON.parse(localStorage.getItem(RK_KEY)) || {};
+  }catch(e){
+    return {};
+  }
 }
+
 function saveLocalRanks(data){
-  try{ localStorage.setItem(RK_KEY, JSON.stringify(data)); }catch(e){}
+  try{
+    localStorage.setItem(RK_KEY, JSON.stringify(data));
+  }catch(e){}
+}
+
+function normalizeRankEntry(entry, fallbackLevel){
+  return {
+    id: entry.id || `${entry.ts || Date.now()}_${entry.nick || '익명'}`,
+    nick: entry.nick || '익명',
+    score: Number(entry.score) || 0,
+    level: entry.level || fallbackLevel || 'kids',
+    words: Number(entry.words) || 0,
+    combo: Number(entry.combo) || 0,
+    accuracy: Number(entry.accuracy) || 0,
+    time: entry.time || '0:00',
+    ts: Number(entry.ts) || Date.now()
+  };
+}
+
+function dedupeAndSortRanks(list){
+  const map = new Map();
+
+  list.forEach(raw => {
+    const e = normalizeRankEntry(raw, raw.level);
+    const key = e.id || `${e.ts}_${e.nick}`;
+    if(!map.has(key)){
+      map.set(key, e);
+    }
+  });
+
+  return [...map.values()].sort((a,b)=>{
+    if(b.score !== a.score) return b.score - a.score;
+    if((b.combo || 0) !== (a.combo || 0)) return (b.combo || 0) - (a.combo || 0);
+    if((b.accuracy || 0) !== (a.accuracy || 0)) return (b.accuracy || 0) - (a.accuracy || 0);
+    return (a.ts || 0) - (b.ts || 0);
+  });
 }
 
 async function fbPush(level, entry){
@@ -945,7 +1059,9 @@ async function fbPush(level, entry){
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify(entry)
     });
-  }catch(e){ console.warn('Firebase push failed:', e); }
+  }catch(e){
+    console.warn('Firebase push failed:', e);
+  }
 }
 
 async function fbGet(level){
@@ -954,51 +1070,112 @@ async function fbGet(level){
     const r = await fetch(`${FIREBASE_DB_URL}/rankings/${level}.json`);
     const d = await r.json();
     if(!d) return [];
-    return Object.values(d);
-  }catch(e){ console.warn('Firebase get failed:', e); return []; }
+    return Object.values(d).map(v => normalizeRankEntry(v, level));
+  }catch(e){
+    console.warn('Firebase get failed:', e);
+    return [];
+  }
+}
+
+async function fbClearAll(){
+  if(!useFirebase) return true;
+  try{
+    await fetch(`${FIREBASE_DB_URL}/rankings.json`, {
+      method:'DELETE'
+    });
+    return true;
+  }catch(e){
+    console.warn('Firebase clear failed:', e);
+    return false;
+  }
+}
+
+async function getFullRanks(level){
+  const local = loadLocalRanks();
+  const localList = (local[level] || []).map(e => normalizeRankEntry(e, level));
+
+  if(useFirebase){
+    const fbList = await fbGet(level);
+    return dedupeAndSortRanks([...localList, ...fbList]);
+  }
+
+  return dedupeAndSortRanks(localList);
+}
+
+async function getFullRanksAll(){
+  const levels = ['kids','elem','junior','youth','adult'];
+  let merged = [];
+
+  for(const lv of levels){
+    const items = await getFullRanks(lv);
+    merged.push(...items);
+  }
+
+  return dedupeAndSortRanks(merged);
 }
 
 async function saveRank(nick){
   const entry = {
+    id: Date.now().toString(36) + Math.random().toString(36).slice(2,8),
     nick,
     score: S.score,
     level: S.level,
     words: S.wordsCleared,
     combo: S.maxCombo,
-    accuracy: S.totalTyped > 0 ? Math.round((S.correctTyped/S.totalTyped)*100) : 0,
+    accuracy: S.totalTyped > 0 ? Math.round((S.correctTyped / S.totalTyped) * 100) : 0,
     time: fmtTime(S.elapsed),
     ts: Date.now()
   };
 
-  /* Local */
+  /* Local: 전체 순위 계산을 위해 많이 저장 */
   const local = loadLocalRanks();
   if(!local[S.level]) local[S.level] = [];
   local[S.level].push(entry);
-  local[S.level].sort((a,b)=>b.score-a.score);
-  local[S.level] = local[S.level].slice(0,10);
+  local[S.level] = dedupeAndSortRanks(local[S.level]).slice(0, 3000);
   saveLocalRanks(local);
 
   /* Firebase */
   await fbPush(S.level, entry);
+
+  /* 내 순위 계산 */
+  const levelRanks = await getFullRanks(S.level);
+  const allRanks = await getFullRanksAll();
+
+  lastSavedRankInfo = {
+    id: entry.id,
+    level: entry.level,
+    levelRank: levelRanks.findIndex(e => e.id === entry.id) + 1,
+    allRank: allRanks.findIndex(e => e.id === entry.id) + 1
+  };
 }
 
-async function getRanks(level){
-  const local = loadLocalRanks();
-  const localList = local[level] || [];
+function renderMyRankBox(filterLevel){
+  let myRank = null;
+  let label = '내 순위';
 
-  if(useFirebase){
-    const fbList = await fbGet(level);
-    const merged = [...localList, ...fbList];
-    /* Dedupe by ts */
-    const seen = new Set();
-    const unique = merged.filter(e => {
-      if(seen.has(e.ts)) return false;
-      seen.add(e.ts); return true;
-    });
-    unique.sort((a,b)=>b.score-a.score);
-    return unique.slice(0,10);
+  if(lastSavedRankInfo){
+    if(filterLevel === 'all'){
+      myRank = lastSavedRankInfo.allRank;
+      label = '내 순위 (전체)';
+    }else if(filterLevel === lastSavedRankInfo.level){
+      myRank = lastSavedRankInfo.levelRank;
+      label = `내 순위 (${LEVEL_LABELS[filterLevel]})`;
+    }
   }
-  return localList;
+
+  if(myRank && myRank > 0){
+    myRankBox.style.display = 'block';
+    myRankBox.innerHTML = `
+      <div class="label">${label}</div>
+      <div class="value">${myRank}위</div>
+    `;
+  }else{
+    myRankBox.style.display = 'none';
+    myRankBox.innerHTML = `
+      <div class="label">내 순위</div>
+      <div class="value">-</div>
+    `;
+  }
 }
 
 async function showRankingModal(filterLevel){
@@ -1006,6 +1183,7 @@ async function showRankingModal(filterLevel){
 
   /* Build filter buttons */
   rkFilter.innerHTML = '';
+
   const allBtn = document.createElement('button');
   allBtn.textContent = '전체';
   allBtn.className = filterLevel === 'all' ? 'active' : '';
@@ -1020,32 +1198,43 @@ async function showRankingModal(filterLevel){
     rkFilter.appendChild(btn);
   }
 
-  /* Gather data */
-  let list = [];
+  /* 전체 데이터 확보 */
+  let fullList = [];
   if(filterLevel === 'all'){
-    for(const lv of levels){
-      const items = await getRanks(lv);
-      list.push(...items);
-    }
-    list.sort((a,b)=>b.score-a.score);
-    list = list.slice(0,20);
+    fullList = await getFullRanksAll();
   } else {
-    list = await getRanks(filterLevel);
+    fullList = await getFullRanks(filterLevel);
   }
 
-  /* Build table */
+  /* 표에는 1~10위만 */
+  const top10 = fullList.slice(0, 10);
+
   rkBody.innerHTML = '';
-  if(list.length === 0){
+
+  if(top10.length === 0){
     rkBody.innerHTML = '<tr><td colspan="6" style="padding:20px;color:var(--color-muted);">기록이 없습니다</td></tr>';
   } else {
-    list.forEach((e, i) => {
+    top10.forEach((e, i) => {
       const medal = i===0 ? '🥇' : i===1 ? '🥈' : i===2 ? '🥉' : (i+1);
       const tr = document.createElement('tr');
-      tr.innerHTML = `<td class="medal">${medal}</td><td>${e.nick||'익명'}</td><td style="font-weight:700;color:var(--color-accent)">${e.score}</td><td>${e.combo||0}</td><td>${e.accuracy||0}%</td><td>${LEVEL_LABELS[e.level]||e.level}</td>`;
+
+      if(lastSavedRankInfo && e.id === lastSavedRankInfo.id){
+        tr.classList.add('mine');
+      }
+
+      tr.innerHTML = `
+        <td class="medal">${medal}</td>
+        <td>${e.nick||'익명'}</td>
+        <td style="font-weight:700;color:var(--color-accent)">${e.score}</td>
+        <td>${e.combo||0}</td>
+        <td>${e.accuracy||0}%</td>
+        <td>${LEVEL_LABELS[e.level]||e.level}</td>
+      `;
       rkBody.appendChild(tr);
     });
   }
 
+  renderMyRankBox(filterLevel);
   rkModal.classList.add('visible');
 }
 
@@ -1104,14 +1293,19 @@ goSave.addEventListener('click', async ()=>{
   const nick = goNick.value.trim() || '익명';
   await saveRank(nick);
   goModal.classList.remove('visible');
+
   /* Cleanup game state and show ranking */
   wordZone.innerHTML = '';
   S.words = [];
   startOverlay.classList.remove('hidden');
+  startOverlay.querySelector('.big-text').textContent = '✝ 말씀 타이핑 ✝';
+  startOverlay.querySelector('.small-text').textContent = '오른쪽에서 난이도를 선택하고 시작하세요';
   document.body.classList.remove('game-running');
   btnStart.disabled = false;
-  btnPause.disabled = true; btnPause.textContent = '⏸ 일시정지';
+  btnPause.disabled = true;
+  btnPause.textContent = '⏸ 일시정지';
   btnStop.disabled = true;
+
 
   $$('.diff-btn').forEach(b => b.disabled = false);
   await showRankingModal(S.level);
@@ -1122,26 +1316,39 @@ goSkip.addEventListener('click', ()=>{
   wordZone.innerHTML = '';
   S.words = [];
   startOverlay.classList.remove('hidden');
+  startOverlay.querySelector('.big-text').textContent = '✝ 말씀 타이핑 ✝';
+  startOverlay.querySelector('.small-text').textContent = '오른쪽에서 난이도를 선택하고 시작하세요';
   document.body.classList.remove('game-running');
   btnStart.disabled = false;
-  btnPause.disabled = true; btnPause.textContent = '⏸ 일시정지';
+  btnPause.disabled = true;
+  btnPause.textContent = '⏸ 일시정지';
   btnStop.disabled = true;
+
 
   $$('.diff-btn').forEach(b => b.disabled = false);
 });
 
 /* Ranking modal */
 rkClose.addEventListener('click', ()=> rkModal.classList.remove('visible'));
-rkClear.addEventListener('click', ()=>{
+
+rkClear.addEventListener('click', async ()=>{
   if(confirm('모든 랭킹 데이터를 삭제하시겠습니까?')){
     localStorage.removeItem(RK_KEY);
-    showRankingModal('all');
+    await fbClearAll();
+    lastSavedRankInfo = null;
+    await showRankingModal('all');
   }
 });
 
 /* Close modals on backdrop click */
-goModal.addEventListener('click', e => { if(e.target === goModal){ /* do nothing, require button */ } });
-rkModal.addEventListener('click', e => { if(e.target === rkModal) rkModal.classList.remove('visible'); });
+goModal.addEventListener('click', e => {
+  if(e.target === goModal){
+    /* do nothing, require button */
+  }
+});
+rkModal.addEventListener('click', e => {
+  if(e.target === rkModal) rkModal.classList.remove('visible');
+});
 
 /* Escape closes modals */
 document.addEventListener('keydown', e => {
