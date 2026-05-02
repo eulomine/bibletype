@@ -25,400 +25,128 @@
 html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);background:var(--color-bg);color:var(--color-text);}
 
 /* ===== Layout ===== */
-#app{
-  display:flex;
-  width:100%;height:100%;
-  flex-direction:row;
-}
+#app{ display:flex; width:100%; height:100%; flex-direction:row; }
 
-/* --- Left: Game Panel --- */
-.game-panel{
-  flex:1;
-  display:flex;
-  flex-direction:column;
-  position:relative;
-  min-width:0;
-  height:100%;
-}
-.game-area{
-  flex:1;
-  position:relative;
-  background:url('https://www.dropbox.com/scl/fi/5v49jobvr49qtognpngjb/background-church.png?rlkey=doov91nti27jnmito24hc2f21&st=450qi53g&raw=1') center center/cover no-repeat;
-  overflow:hidden;
-}
-.game-overlay{
-  position:absolute;inset:0;
-  background:linear-gradient(180deg,rgba(15,14,23,.15) 0%,rgba(15,14,23,.35) 100%);
-  pointer-events:none;z-index:1;
-}
+.game-panel{ flex:1; display:flex; flex-direction:column; position:relative; min-width:0; height:100%; }
+.game-area{ flex:1; position:relative; background:url('https://www.dropbox.com/scl/fi/5v49jobvr49qtognpngjb/background-church.png?rlkey=doov91nti27jnmito24hc2f21&st=450qi53g&raw=1') center center/cover no-repeat; overflow:hidden; }
+.game-overlay{ position:absolute;inset:0; background:linear-gradient(180deg,rgba(15,14,23,.15) 0%,rgba(15,14,23,.35) 100%); pointer-events:none;z-index:1; }
 .word-zone{position:absolute;inset:0;z-index:2;}
 
-/* Status bar overlaid on game area */
 .status-bar{
   position:absolute;top:0;left:0;right:0;
   display:flex;justify-content:center;gap:18px;
-  padding:8px 12px;
-  background:rgba(15,14,23,.7);
-  backdrop-filter:blur(6px);
-  z-index:10;
-  font-size:14px;
-  flex-wrap:wrap;
+  padding:8px 12px; background:rgba(15,14,23,.7);
+  backdrop-filter:blur(6px); z-index:10; font-size:14px; flex-wrap:wrap;
 }
 .stat{display:flex;align-items:center;gap:4px;}
-.stat .icon{font-size:16px;}
 .stat .val{font-weight:700;color:var(--color-accent);min-width:28px;text-align:center;}
 .stat .lives-display{letter-spacing:2px;font-size:15px;}
 
-/* Input bar at bottom of game panel */
-.input-bar{
-  display:flex;align-items:center;gap:8px;
-  padding:8px 12px;
-  background:var(--color-surface);
-  border-top:2px solid var(--color-surface2);
-}
+.input-bar{ display:flex;align-items:center;gap:8px; padding:8px 12px; background:var(--color-surface); border-top:2px solid var(--color-surface2); }
 .input-bar input{
-  flex:1;
-  padding:10px 14px;
-  border:2px solid var(--color-surface2);
-  border-radius:var(--radius);
-  background:var(--color-bg);
-  color:var(--color-text);
-  font-size:16px;
-  outline:none;
-  transition:var(--transition);
+  flex:1; padding:10px 14px; border:2px solid var(--color-surface2); border-radius:var(--radius);
+  background:var(--color-bg); color:var(--color-text); font-size:16px; outline:none; transition:var(--transition);
 }
 .input-bar input:focus{border-color:var(--color-primary);}
-.input-bar input:disabled{opacity:.4;}
-.btn-icon{
-  width:40px;height:40px;
-  border:none;border-radius:var(--radius);
-  background:var(--color-surface2);
-  color:var(--color-text);
-  font-size:18px;cursor:pointer;
-  transition:var(--transition);
-  flex-shrink:0;
-}
+.btn-icon{ width:40px;height:40px; border:none;border-radius:var(--radius); background:var(--color-surface2); color:var(--color-text); font-size:18px;cursor:pointer; transition:var(--transition); flex-shrink:0; }
 .btn-icon:hover{background:var(--color-primary);}
 
-/* --- Right: Side Panel --- */
-.side-panel{
-  width:300px;
-  display:flex;flex-direction:column;
-  background:var(--color-surface);
-  border-left:2px solid var(--color-surface2);
-  height:100%;
-  overflow-y:auto;
-}
-.side-header{
-  padding:16px;text-align:center;
-  background:var(--color-surface2);
-}
+.side-panel{ width:300px; display:flex;flex-direction:column; background:var(--color-surface); border-left:2px solid var(--color-surface2); height:100%; overflow-y:auto; }
+.side-header{ padding:16px;text-align:center; background:var(--color-surface2); }
 .side-header h1{font-size:20px;color:var(--color-accent);}
-.side-header .verse{font-size:12px;color:var(--color-muted);margin-top:4px;}
 
-/* Difficulty selection */
 .diff-section{padding:12px;}
-.diff-section h3{font-size:13px;color:var(--color-muted);margin-bottom:8px;}
 .diff-btn{
-  display:block;width:100%;
-  padding:10px;margin-bottom:6px;
-  border:2px solid var(--color-surface2);
-  border-radius:var(--radius);
-  background:var(--color-bg);
-  color:var(--color-text);
-  cursor:pointer;text-align:left;
-  transition:var(--transition);
+  display:block;width:100%; padding:10px;margin-bottom:6px; border:2px solid var(--color-surface2);
+  border-radius:var(--radius); background:var(--color-bg); color:var(--color-text); cursor:pointer; text-align:left; transition:var(--transition);
 }
 .diff-btn .label{font-weight:700;font-size:14px;}
 .diff-btn .sub{display:block;font-size:11px;color:var(--color-muted);margin-top:2px;}
 .diff-btn.active{border-color:var(--color-primary);background:rgba(233,69,96,.15);}
-.diff-btn:hover{border-color:var(--color-primary);}
-.diff-btn:disabled{opacity:.4;cursor:not-allowed;}
 
-/* Control buttons */
 .ctrl-section{padding:12px;display:flex;flex-direction:column;gap:8px;}
-.ctrl-btn{
-  padding:12px;border:none;border-radius:var(--radius);
-  font-size:15px;font-weight:700;cursor:pointer;
-  transition:var(--transition);
-}
+.ctrl-btn{ padding:12px;border:none;border-radius:var(--radius); font-size:15px;font-weight:700;cursor:pointer; transition:var(--transition); }
 .ctrl-btn.start{background:var(--color-primary);color:#fff;}
-.ctrl-btn.start:hover{background:#c73a52;}
-.ctrl-btn.pause{background:var(--color-surface2);color:var(--color-text);}
-.ctrl-btn.stop{background:var(--color-danger);color:#fff;}
 .ctrl-btn.rank{background:var(--color-surface2);color:var(--color-accent);}
-.ctrl-btn:disabled{opacity:.4;cursor:not-allowed;}
 
-/* Verse banner in side panel */
-.verse-banner{
-  margin-top:auto;
-  padding:12px;
-  text-align:center;
-  font-size:12px;
-  color:var(--color-muted);
-  border-top:1px solid var(--color-surface2);
-}
-
-/* ===== Word Nodes ===== */
 .word-node{
-  position:absolute;
-  padding:4px 12px;
-  border-radius:20px;
-  font-weight:700;
-  font-size:16px;
-  white-space:nowrap;
-  pointer-events:none;
-  z-index:5;
-  transition:opacity .15s;
-  background:rgba(255,255,255,.92);
-  color:#1a1932;
-  box-shadow:0 2px 8px rgba(0,0,0,.3);
+  position:absolute; padding:4px 12px; border-radius:20px; font-weight:700; font-size:16px;
+  white-space:nowrap; pointer-events:none; z-index:5; background:rgba(255,255,255,.92); color:#1a1932; box-shadow:0 2px 8px rgba(0,0,0,.3);
 }
-.word-node.bonus{
-  background:linear-gradient(135deg,#ffd700,#ffaa00);
-  color:#1a1932;
-  animation:glow 1s ease-in-out infinite alternate;
-}
-@keyframes glow{
-  from{box-shadow:0 0 6px rgba(255,215,0,.6);}
-  to{box-shadow:0 0 18px rgba(255,215,0,.9);}
-}
+.word-node.bonus{ background:linear-gradient(135deg,#ffd700,#ffaa00); animation:glow 1s ease-in-out infinite alternate; }
+@keyframes glow{ from{box-shadow:0 0 6px rgba(255,215,0,.6);} to{box-shadow:0 0 18px rgba(255,215,0,.9);} }
 
-/* Floating score */
-.float-score{
-  position:absolute;
-  font-weight:900;font-size:18px;
-  color:var(--color-accent);
-  pointer-events:none;z-index:20;
-  animation:floatUp .8s ease-out forwards;
+.start-overlay, .pause-overlay{
+  position:absolute;inset:0;z-index:30; display:flex;flex-direction:column; justify-content:center;align-items:center;
+  background:rgba(15,14,23,.75); backdrop-filter:blur(4px);
 }
-@keyframes floatUp{
-  0%{opacity:1;transform:translateY(0);}
-  100%{opacity:0;transform:translateY(-50px);}
-}
-
-/* Miss effect */
-.miss-effect{
-  position:absolute;font-size:24px;
-  pointer-events:none;z-index:20;
-  animation:floatUp .6s ease-out forwards;
-}
-
-/* Start overlay */
-.start-overlay{
-  position:absolute;inset:0;z-index:30;
-  display:flex;flex-direction:column;
-  justify-content:center;align-items:center;
-  background:rgba(15,14,23,.75);
-  backdrop-filter:blur(4px);
-}
-.start-overlay .big-text{font-size:32px;font-weight:900;color:var(--color-accent);text-shadow:0 2px 12px rgba(255,215,0,.5);}
-.start-overlay .small-text{font-size:14px;color:var(--color-muted);margin-top:8px;}
 .start-overlay.hidden{display:none;}
-
-/* Pause overlay */
-.pause-overlay{
-  position:absolute;inset:0;z-index:30;
-  display:none;flex-direction:column;
-  justify-content:center;align-items:center;
-  background:rgba(15,14,23,.7);
-  backdrop-filter:blur(4px);
-}
+.pause-overlay{display:none;}
 .pause-overlay.visible{display:flex;}
-.pause-overlay .pause-text{font-size:28px;font-weight:900;color:var(--color-accent);}
 
-/* ===== Modals ===== */
-.modal-backdrop{
-  position:fixed;inset:0;z-index:100;
-  background:rgba(0,0,0,.6);
-  display:none;justify-content:center;align-items:center;
-  backdrop-filter:blur(3px);
-}
+.modal-backdrop{ position:fixed;inset:0;z-index:100; background:rgba(0,0,0,.6); display:none;justify-content:center;align-items:center; backdrop-filter:blur(3px); }
 .modal-backdrop.visible{display:flex;}
-.modal{
-  background:var(--color-surface);
-  border-radius:var(--radius);
-  padding:24px;
-  max-width:480px;width:90%;
-  max-height:85vh;overflow-y:auto;
-  box-shadow:var(--shadow);
-}
-.modal h2{text-align:center;margin-bottom:16px;color:var(--color-accent);}
-.modal-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;}
-.modal-stat{
-  background:var(--color-bg);padding:10px;border-radius:var(--radius);text-align:center;
-}
-.modal-stat .label{font-size:11px;color:var(--color-muted);}
-.modal-stat .value{font-size:18px;font-weight:700;color:var(--color-accent);margin-top:2px;}
-.modal-msg{text-align:center;font-size:14px;color:var(--color-muted);margin-bottom:16px;line-height:1.5;}
-.modal input{
-  width:100%;padding:10px;margin-bottom:12px;
-  border:2px solid var(--color-surface2);border-radius:var(--radius);
-  background:var(--color-bg);color:var(--color-text);font-size:15px;
-  outline:none;
-}
-.modal input:focus{border-color:var(--color-primary);}
-.modal-btns{display:flex;gap:8px;justify-content:center;}
-.modal-btns button{
-  padding:10px 20px;border:none;border-radius:var(--radius);
-  font-size:14px;font-weight:700;cursor:pointer;transition:var(--transition);
-}
-.modal-btns .btn-primary{background:var(--color-primary);color:#fff;}
-.modal-btns .btn-secondary{background:var(--color-surface2);color:var(--color-text);}
+.modal{ background:var(--color-surface); border-radius:var(--radius); padding:24px; max-width:480px; width:90%; box-shadow:var(--shadow); }
 
-/* Ranking table */
-.rank-filter{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;justify-content:center;}
-.rank-filter button{
-  padding:6px 12px;border:1px solid var(--color-surface2);border-radius:var(--radius);
-  background:var(--color-bg);color:var(--color-text);font-size:12px;cursor:pointer;
-  transition:var(--transition);
-}
-.rank-filter button.active{border-color:var(--color-primary);color:var(--color-primary);}
-.rank-table{width:100%;border-collapse:collapse;font-size:13px;}
-.rank-table th{padding:8px 4px;border-bottom:2px solid var(--color-surface2);color:var(--color-muted);font-weight:600;text-align:center;}
-.rank-table td{padding:6px 4px;border-bottom:1px solid var(--color-surface2);text-align:center;}
-.rank-table .medal{font-size:16px;}
-.rank-clear{margin-top:12px;text-align:center;}
-.rank-clear button{
-  padding:6px 14px;border:1px solid var(--color-danger);border-radius:var(--radius);
-  background:transparent;color:var(--color-danger);font-size:12px;cursor:pointer;
-}
+.rank-table{width:100%;border-collapse:collapse;font-size:13px; margin-top:10px;}
+.rank-table th{padding:8px;border-bottom:2px solid var(--color-surface2);color:var(--color-muted);}
+.rank-table td{padding:8px;border-bottom:1px solid var(--color-surface2);text-align:center;}
+.rank-clear button{ margin-top:15px; padding:6px 14px; border:1px solid var(--color-danger); background:transparent; color:var(--color-danger); border-radius:var(--radius); cursor:pointer; }
 
-/* ===== My Rank Box ===== */
-.my-rank-box{
-  margin-top:12px;
-  padding:12px;
-  border-radius:var(--radius);
-  background:rgba(255,255,255,.06);
-  border:1px solid rgba(255,215,0,.25);
-  text-align:center;
-  font-size:14px;
-  color:var(--color-text);
-}
-.my-rank-box .label{
-  font-size:12px;
-  color:var(--color-muted);
-  margin-bottom:4px;
-}
-.my-rank-box .value{
-  font-size:22px;
-  font-weight:900;
-  color:var(--color-accent);
-}
-.rank-table tr.mine{
-  background:rgba(255,215,0,.10);
-}
-
-/* ===== Screen shake ===== */
-@keyframes shake{
-  0%,100%{transform:translateX(0);}
-  20%{transform:translateX(-6px);}
-  40%{transform:translateX(6px);}
-  60%{transform:translateX(-4px);}
-  80%{transform:translateX(4px);}
-}
-.shake{animation:shake .3s ease;}
-
-/* ===== Responsive: Tablet / Small screen ===== */
 @media(max-width:900px){
   #app{flex-direction:column;}
-  .game-panel{height:auto;flex:1;}
-  .side-panel{
-    width:100%;height:auto;
-    border-left:none;border-top:2px solid var(--color-surface2);
-    flex-direction:row;flex-wrap:wrap;
-    overflow-y:visible;
-  }
-  .side-header{width:100%;padding:10px;}
-  .side-header h1{font-size:16px;}
-  .diff-section{
-    display:flex;flex-wrap:wrap;gap:6px;padding:8px;width:100%;
-  }
-  .diff-section h3{width:100%;margin-bottom:4px;}
-  .diff-btn{
-    flex:1;min-width:100px;margin-bottom:0;padding:8px;text-align:center;
-  }
-  .ctrl-section{flex-direction:row;flex-wrap:wrap;padding:8px;width:100%;}
-  .ctrl-btn{flex:1;min-width:80px;padding:10px;font-size:13px;}
-  .verse-banner{width:100%;padding:8px;}
-}
-
-/* When game is running on small screen, hide side panel */
-.game-running .side-panel{display:none;}
-.game-running .game-panel{height:100%;}
-.game-running #app{flex-direction:column;}
-
-/* Very small (phone) */
-@media(max-width:500px){
-  .status-bar{font-size:12px;gap:10px;padding:6px 8px;}
-  .word-node{font-size:14px;padding:3px 9px;}
-  .input-bar input{font-size:14px;padding:8px 10px;}
+  .side-panel{width:100%; flex-direction:row; flex-wrap:wrap; border-left:none; border-top:2px solid var(--color-surface2);}
 }
 </style>
 </head>
 <body>
 <div id="app">
-  <!-- LEFT: Game Panel -->
   <div class="game-panel">
     <div class="game-area" id="gameArea">
       <div class="game-overlay"></div>
       <div class="status-bar" id="statusBar">
-        <div class="stat"><span class="icon">🏆</span><span>점수</span><span class="val" id="scoreVal">0</span></div>
-        <div class="stat"><span class="icon">🔥</span><span>콤보</span><span class="val" id="comboVal">0</span></div>
-        <div class="stat"><span class="icon">❌</span><span>미스</span><span class="val" id="missVal">0</span></div>
-        <div class="stat"><span class="icon">💧</span><span class="lives-display" id="livesVal">♥♥♥♥♥</span></div>
-        <div class="stat"><span class="icon">⏱</span><span class="val" id="timeVal">0:00</span></div>
+        <div class="stat">🏆<span class="val" id="scoreVal">0</span></div>
+        <div class="stat">🔥<span class="val" id="comboVal">0</span></div>
+        <div class="stat">💧<span class="lives-display" id="livesVal">♥♥♥♥♥</span></div>
+        <div class="stat">⏱<span class="val" id="timeVal">0:00</span></div>
       </div>
       <div class="word-zone" id="wordZone"></div>
       <div class="start-overlay" id="startOverlay">
-        <div class="big-text">✝ 말씀 타이핑 ✝</div>
-        <div class="small-text">오른쪽에서 난이도를 선택하고 시작하세요</div>
+        <div style="font-size:32px; font-weight:900; color:var(--color-accent);">✝ 말씀 타이핑 ✝</div>
+        <div style="color:var(--color-muted); margin-top:10px;">난이도를 선택하고 시작하세요</div>
       </div>
-      <div class="pause-overlay" id="pauseOverlay">
-        <div class="pause-text">⏸ 일시정지</div>
-      </div>
+      <div class="pause-overlay" id="pauseOverlay"><div style="font-size:28px; color:var(--color-accent);">⏸ 일시정지</div></div>
     </div>
     <div class="input-bar">
-      <input type="text" id="typingInput" placeholder="단어 입력 후 Enter ↵" autocomplete="off" disabled>
-      <button class="btn-icon" id="btnFullscreen" title="전체화면">⛶</button>
-      <button class="btn-icon" id="btnSound" title="효과음">🔊</button>
+      <input type="text" id="typingInput" placeholder="단어 입력 후 Enter ↵" disabled>
+      <button class="btn-icon" id="btnSound">🔊</button>
     </div>
   </div>
 
-  <!-- RIGHT: Side Panel -->
-  <div class="side-panel" id="sidePanel">
-    <div class="side-header">
-      <h1>✝ 말씀 타이핑 ✝</h1>
-      <p class="verse" id="headerVerse"></p>
-    </div>
+  <div class="side-panel">
+    <div class="side-header"><h1>말씀 타이핑</h1></div>
     <div class="diff-section">
-      <h3>난이도 선택</h3>
-      <button class="diff-btn active" data-level="kids"><span class="label">유년꿈터</span><span class="sub">가운데줄 · ★☆☆☆☆</span></button>
-      <button class="diff-btn" data-level="elem"><span class="label">초등꿈터</span><span class="sub">Shift 없음 · ★★☆☆☆</span></button>
-      <button class="diff-btn" data-level="junior"><span class="label">소년꿈터</span><span class="sub">Shift 포함 · ★★★☆☆</span></button>
-      <button class="diff-btn" data-level="youth"><span class="label">청소년부</span><span class="sub">빠른 속도 · ★★★★☆</span></button>
-      <button class="diff-btn" data-level="adult"><span class="label">교구국</span><span class="sub">최고 난이도 · ★★★★★</span></button>
+      <button class="diff-btn active" data-level="kids"><span class="label">유년꿈터</span><span class="sub">가운데줄 위주</span></button>
+      <button class="diff-btn" data-level="elem"><span class="label">초등꿈터</span><span class="sub">기본 단어</span></button>
+      <button class="diff-btn" data-level="adult"><span class="label">교구국</span><span class="sub">최고 난이도</span></button>
     </div>
     <div class="ctrl-section">
       <button class="ctrl-btn start" id="btnStart">▶ 시작</button>
-      <button class="ctrl-btn pause" id="btnPause" disabled>⏸ 일시정지</button>
-      <button class="ctrl-btn stop" id="btnStop" disabled>■ 중지</button>
+      <button class="ctrl-btn" id="btnPause" disabled style="background:var(--color-surface2); color:#fff;">⏸ 일시정지</button>
       <button class="ctrl-btn rank" id="btnRanking">🏅 랭킹</button>
     </div>
-    <div class="verse-banner" id="verseBanner"></div>
   </div>
 </div>
 
 <!-- Game Over Modal -->
 <div class="modal-backdrop" id="goModal">
   <div class="modal">
-    <h2>🙏 게임 종료</h2>
-    <div class="modal-stats" id="goStats"></div>
-    <div class="modal-msg" id="goMsg"></div>
-    <input type="text" id="goNick" placeholder="닉네임을 입력하세요" maxlength="12">
-    <div class="modal-btns">
-      <button class="btn-primary" id="goSave">💾 저장 & 랭킹보기</button>
-      <button class="btn-secondary" id="goSkip">건너뛰기</button>
+    <h2 style="text-align:center; color:var(--color-accent);">🙏 게임 종료</h2>
+    <div id="goStats" style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:20px 0;"></div>
+    <input type="text" id="goNick" placeholder="닉네임을 입력하세요" style="width:100%; padding:10px; margin-bottom:15px; background:var(--color-bg); border:1px solid var(--color-surface2); color:#fff;">
+    <div style="display:flex; gap:10px;">
+      <button id="goSave" style="flex:1; padding:10px; background:var(--color-primary); color:#fff; border:none; border-radius:5px; cursor:pointer;">저장 & 랭킹</button>
+      <button id="goSkip" style="flex:1; padding:10px; background:var(--color-surface2); color:#fff; border:none; border-radius:5px; cursor:pointer;">건너뛰기</button>
     </div>
   </div>
 </div>
@@ -426,942 +154,174 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
 <!-- Ranking Modal -->
 <div class="modal-backdrop" id="rkModal">
   <div class="modal" style="max-width:560px;">
-    <h2>🏅 랭킹</h2>
-    <div class="rank-filter" id="rkFilter"></div>
+    <h2 style="text-align:center; color:var(--color-accent);">🏅 랭킹</h2>
     <table class="rank-table">
-      <thead><tr><th>#</th><th>닉네임</th><th>점수</th><th>콤보</th><th>정확도</th><th>난이도</th></tr></thead>
+      <thead><tr><th>순위</th><th>닉네임</th><th>점수</th><th>난이도</th></tr></thead>
       <tbody id="rkBody"></tbody>
     </table>
-    <div class="rank-clear"><button id="rkClear">🗑 랭킹 초기화</button></div>
-    <div id="myRankBox" class="my-rank-box" style="display:none;">
-      <div class="label">내 순위</div>
-      <div class="value">-</div>
-    </div>
-    <div class="modal-btns" style="margin-top:12px;">
-      <button class="btn-secondary" id="rkClose">닫기</button>
-    </div>
+    <div class="rank-clear" style="text-align:center;"><button id="rkClear">🗑 랭킹 초기화 (관리자)</button></div>
+    <button id="rkClose" style="width:100%; margin-top:15px; padding:10px; background:var(--color-surface2); color:#fff; border:none; border-radius:5px; cursor:pointer;">닫기</button>
   </div>
 </div>
 
 <script>
-(()=>{
-/* ===== Firebase Config ===== */
-const FIREBASE_DB_URL = ''; // e.g. 'https://your-project-default-rtdb.firebaseio.com'
-const useFirebase = FIREBASE_DB_URL.length > 0;
+(() => {
+  /* --- 관리자 설정 --- */
+  const ADMIN_PASSWORD = "church1234"; // 랭킹 초기화 비밀번호
 
-/* ===== Verses ===== */
-const VERSES = [
-  '항상 기뻐하라 — 데살로니가전서 5:16',
-  '쉬지 말고 기도하라 — 데살로니가전서 5:17',
-  '범사에 감사하라 — 데살로니가전서 5:18',
-  '여호와는 나의 목자시니 — 시편 23:1',
-  '네 마음을 다하여 여호와를 신뢰하라 — 잠언 3:5',
-  '두려워하지 말라 내가 너와 함께 함이라 — 이사야 41:10',
-  '내가 너를 강하게 하리라 — 이사야 41:10',
-  '사랑은 오래 참고 사랑은 온유하며 — 고린도전서 13:4',
-];
+  const WORD_BANK = {
+    kids: { normal: ['하나님','아멘','나라','노아','하늘','마음','인내','우리','노래'], bonus: ['하나님나라'] },
+    elem: { normal: ['사랑','감사','기도','교회','믿음','소망','구원','찬양','성경'], bonus: ['예수님','신광교회'] },
+    adult: { normal: ['예수그리스도','십자가','부활절','성령충만','사도행전','여호와이레','임마누엘'], bonus: ['이리신광교회','항상 기뻐하라'] }
+  };
 
-/* ===== Word Bank ===== */
-const WORD_BANK = {
-  kids: {
-    normal: [
-      '하나님','아멘','나라','마리아','한나','노아','힘','몸','머리','어린이',
-      '하늘','마음','어린양','마가','아론','미리암','나오미','만나','만민','말',
-      '아이','인내','우리','나이','홀로','모임','노인','밀알','모리아',
-      '하나','온전','인내','어린아이','나눔','노래','소망',
-      '나일','하인','놀라움','어머니','오리','이마','할머니'
-    ],
-    bonus: ['하나님나라','어린아이','그리스도','여호수아','가나안']
-  },
-  elem: {
-    normal: [
-      '사랑','감사','기도','교회','하늘','천국','믿음','소망','구원','찬양',
-      '축복','평화','성경','복음','주님','목사','성가','부활','성도','이웃',
-      '가족','친구','용서','자비','겸손','인내','충성','감동','위로','목자',
-      '하나님','아버지','어머니','목양','성전','동산','아담','모세','다윗',
-      '요한','마태','누가','마가','사도','시온','가나안','마리아','바울',
-      '솔로몬','사무엘','여호수아','갈릴리','나사렛','고린도',
-      '그리스도','성령님','목장'
-    ],
-    bonus: ['예수님','세례','기쁨','신광교회']
-  },
-  junior: {
-    normal: [
-      '예수님','예배','말씀','은혜','기쁨','예수그리스도','십자가','부활절',
-      '성령님','찬송가','할렐루야','영광','거룩','씨앗','영생','천사',
-      '제자','사도행전','창세기','출애굽기','레위기','민수기','신명기',
-      '여호와이레','여호와닛시','임마누엘',
-      '회개','거듭남','세례','성찬','헌금','봉사','선교','전도',
-      '주기도문','사도신경','산상수훈','십계명',
-      '사랑','감사','기도','교회','하늘','천국','믿음','소망','구원','찬양',
-      '축복','평화','성경','복음','주님','목사','성가','부활','성도','이웃',
-      '가족','친구','용서','자비','겸손','인내','충성','감동','위로','목자',
-      '하나님','아버지','어머니','목양','성전','동산','아담','모세','다윗',
-      '요한','마태','누가','마가','사도','시온','가나안','마리아','바울',
-      '솔로몬','사무엘','여호수아','갈릴리','나사렛','고린도',
-      '그리스도','성령님','목장'
-    ],
-    bonus: ['예수 그리스도','예수님 믿으세요','십자가 사랑','십자가 은혜']
-  },
-  youth: {
-    normal: [
-      '예수님','예배','말씀','은혜','기쁨','예수그리스도','십자가','부활절',
-      '성령님','찬송가','할렐루야','영광','거룩','씨앗','영생','천사',
-      '제자','사도행전','창세기','출애굽기','레위기','민수기','신명기',
-      '여호와이레','여호와닛시','임마누엘',
-      '회개','거듭남','세례','성찬','헌금','봉사','선교','전도',
-      '주기도문','사도신경','산상수훈','십계명',
-      '사랑','감사','기도','교회','하늘','천국','믿음','소망','구원','찬양',
-      '축복','평화','성경','복음','주님','목사','성가','부활','성도','이웃',
-      '가족','친구','용서','자비','겸손','인내','충성','감동','위로','목자',
-      '하나님','아버지','어머니','목양','성전','동산','아담','모세','다윗',
-      '요한','마태','누가','마가','사도','시온','가나안','마리아','바울',
-      '솔로몬','사무엘','여호수아','갈릴리','나사렛','고린도',
-      '그리스도','성령님','목장'
-    ],
-    bonus: ['이리신광교회','쉬지말고 기도하라','항상 기뻐하라','범사에 감사하라']
-  },
-  adult: {
-    normal: [
-      '예수님','예배','말씀','은혜','기쁨','예수그리스도','십자가','부활절',
-      '성령님','찬송가','할렐루야','영광','거룩','씨앗','영생','천사',
-      '제자','사도행전','창세기','출애굽기','레위기','민수기','신명기',
-      '여호와이레','여호와닛시','임마누엘',
-      '회개','거듭남','세례','성찬','헌금','봉사','선교','전도',
-      '주기도문','사도신경','산상수훈','십계명',
-      '사랑','감사','기도','교회','하늘','천국','믿음','소망','구원','찬양',
-      '축복','평화','성경','복음','주님','목사','성가','부활','성도','이웃',
-      '가족','친구','용서','자비','겸손','인내','충성','감동','위로','목자',
-      '하나님','아버지','어머니','목양','성전','동산','아담','모세','다윗',
-      '요한','마태','누가','마가','사도','시온','가나안','마리아','바울',
-      '솔로몬','사무엘','여호수아','갈릴리','나사렛','고린도',
-      '그리스도','성령님','목장','어린양 예수','용서','성령충만'
-    ],
-    bonus: ['이리신광교회','쉬지말고 기도하라','항상 기뻐하라','범사에 감사하라','내 삶은 주의 것']
-  }
-};
+  const DIFF = {
+    kids: { lives: 5, spawnInt: 2500, vy: -1.8, gravity: 0.02, score: 10, bonusChance: 0.1 },
+    elem: { lives: 5, spawnInt: 2000, vy: -2.2, gravity: 0.03, score: 20, bonusChance: 0.12 },
+    adult: { lives: 5, spawnInt: 1200, vy: -3.2, gravity: 0.04, score: 40, bonusChance: 0.15 }
+  };
 
-/* ===== Difficulty Settings ===== */
-const DIFF = {
-  kids:   {lives:5, spawnInt:2800, initVy:-1.8, gravity:0.018, vxRange:0.7,  baseScore:10, bonusMul:3, speedUp:0.006, maxSpeedMul:1.8, bonusChance:0.10},
-  elem:   {lives:5, spawnInt:2400, initVy:-2.2, gravity:0.022, vxRange:0.9,  baseScore:15, bonusMul:3, speedUp:0.010, maxSpeedMul:2.2, bonusChance:0.12},
-  junior: {lives:5, spawnInt:2000, initVy:-2.6, gravity:0.028, vxRange:1.1,  baseScore:20, bonusMul:4, speedUp:0.013, maxSpeedMul:2.6, bonusChance:0.12},
-  youth:  {lives:5, spawnInt:1500, initVy:-3.0, gravity:0.035, vxRange:1.3,  baseScore:25, bonusMul:4, speedUp:0.017, maxSpeedMul:3.2, bonusChance:0.14},
-  adult:  {lives:5, spawnInt:1100, initVy:-3.5, gravity:0.042, vxRange:1.6,  baseScore:35, bonusMul:5, speedUp:0.022, maxSpeedMul:3.8, bonusChance:0.15}
-};
-const LEVEL_LABELS = {kids:'유년꿈터',elem:'초등꿈터',junior:'소년꿈터',youth:'청소년부',adult:'교구국'};
+  let S = { 
+    level: 'kids', running: false, paused: false, score: 0, combo: 0, lives: 5, 
+    words: [], startTime: 0, elapsed: 0, animFrame: null, spawnTimer: null, lastFrame: 0 
+  };
 
-/* ===== DOM References ===== */
-const $ = s => document.querySelector(s);
-const $$ = s => document.querySelectorAll(s);
+  const $ = s => document.querySelector(s);
+  const wordZone = $('#wordZone'), typingInput = $('#typingInput');
 
-const gameArea      = $('#gameArea');
-const wordZone      = $('#wordZone');
-const statusBar     = $('#statusBar');
-const startOverlay  = $('#startOverlay');
-const pauseOverlay  = $('#pauseOverlay');
-const typingInput   = $('#typingInput');
-const scoreVal      = $('#scoreVal');
-const comboVal      = $('#comboVal');
-const missVal       = $('#missVal');
-const livesVal      = $('#livesVal');
-const timeVal       = $('#timeVal');
-const headerVerse   = $('#headerVerse');
-const verseBanner   = $('#verseBanner');
-const btnStart      = $('#btnStart');
-const btnPause      = $('#btnPause');
-const btnStop       = $('#btnStop');
-const btnRanking    = $('#btnRanking');
-const btnFullscreen = $('#btnFullscreen');
-const btnSound      = $('#btnSound');
-const goModal       = $('#goModal');
-const goStats       = $('#goStats');
-const goMsg         = $('#goMsg');
-const goNick        = $('#goNick');
-const goSave        = $('#goSave');
-const goSkip        = $('#goSkip');
-const rkModal       = $('#rkModal');
-const rkFilter      = $('#rkFilter');
-const rkBody        = $('#rkBody');
-const rkClear       = $('#rkClear');
-const rkClose       = $('#rkClose');
-const myRankBox     = $('#myRankBox');
+  function spawnWord() {
+    if (!S.running || S.paused) return;
+    const cfg = DIFF[S.level], bank = WORD_BANK[S.level];
+    const isBonus = Math.random() < cfg.bonusChance;
+    const text = isBonus ? bank.bonus[0] : bank.normal[Math.floor(Math.random() * bank.normal.length)];
+    
+    const el = document.createElement('div');
+    el.className = 'word-node' + (isBonus ? ' bonus' : '');
+    el.textContent = text;
+    wordZone.appendChild(el);
 
-/* ===== Game State ===== */
-const S = {
-  level:'kids', running:false, paused:false,
-  score:0, combo:0, maxCombo:0, misses:0, lives:5, maxLives:5,
-  wordsCleared:0, bonusCleared:0, totalTyped:0, correctTyped:0,
-  words:[], nextId:0, spawnTimer:null, animFrame:null,
-  startTime:0, elapsed:0, pauseStart:0, pausedTotal:0,
-  speedMul:1, soundEnabled:true, lastFrame:0
-};
+    const x = Math.random() * (wordZone.offsetWidth - 100);
+    const y = wordZone.offsetHeight * 0.4;
+    el.style.left = x + 'px';
+    el.style.top = y + 'px';
 
-/* 저장 직후 내 순위 표시용 */
-let lastSavedRankInfo = null;
-
-/* ===== Audio (Web Audio API) ===== */
-let audioCtx = null;
-function getAudio(){
-  if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
-  return audioCtx;
-}
-function playTone(freq, dur, type, vol){
-  if(!S.soundEnabled) return;
-  try{
-    const ctx = getAudio();
-    const o = ctx.createOscillator();
-    const g = ctx.createGain();
-    o.type = type || 'sine';
-    o.frequency.value = freq;
-    g.gain.value = vol || 0.12;
-    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
-    o.connect(g); g.connect(ctx.destination);
-    o.start(); o.stop(ctx.currentTime + dur);
-  }catch(e){}
-}
-function sndMatch(){ playTone(880, 0.12, 'sine', 0.15); setTimeout(()=>playTone(1100, 0.1, 'sine', 0.1), 60); }
-function sndBonus(){ playTone(1200, 0.15, 'sine', 0.18); setTimeout(()=>playTone(1500, 0.15, 'sine', 0.15), 80); setTimeout(()=>playTone(1800, 0.2, 'sine', 0.12), 160); }
-function sndMiss(){ playTone(220, 0.25, 'sawtooth', 0.1); }
-function sndGameOver(){ playTone(440, 0.3, 'sine', 0.15); setTimeout(()=>playTone(330, 0.3, 'sine', 0.12), 200); setTimeout(()=>playTone(220, 0.5, 'sine', 0.1), 400); }
-
-/* ===== Helpers ===== */
-function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
-function rand(a,b){ return Math.random()*(b-a)+a; }
-function fmtTime(ms){
-  const s = Math.floor(ms/1000);
-  return `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;
-}
-
-/* ===== Verse Rotation ===== */
-let verseIdx = 0;
-function rotateVerse(){
-  const v = VERSES[verseIdx % VERSES.length];
-  headerVerse.textContent = v;
-  verseBanner.textContent = v;
-  verseIdx++;
-}
-rotateVerse();
-setInterval(rotateVerse, 12000);
-
-/* ===== UI Updates ===== */
-function updateUI(){
-  scoreVal.textContent = S.score;
-  comboVal.textContent = S.combo;
-  missVal.textContent = S.misses;
-  timeVal.textContent = fmtTime(S.elapsed);
-  let h = '';
-  for(let i=0;i<S.maxLives;i++) h += i<S.lives ? '♥' : '♡';
-  livesVal.textContent = h;
-}
-
-function updateDiffBtns(){
-
-  $$('.diff-btn').forEach(b=>{
-    b.classList.toggle('active', b.dataset.level === S.level);
-  });
-}
-
-/* ===== Spawn Word ===== */
-function spawnWord(){
-  if(!S.running || S.paused) return;
-  const cfg = DIFF[S.level];
-  const bank = WORD_BANK[S.level];
-  if(!bank || !bank.normal || bank.normal.length === 0) return;
-
-  const isBonus = Math.random() < cfg.bonusChance && bank.bonus && bank.bonus.length > 0;
-  const text = isBonus ? pick(bank.bonus) : pick(bank.normal);
-
-  const areaW = wordZone.offsetWidth;
-  const areaH = wordZone.offsetHeight;
-  if(areaW === 0 || areaH === 0) return;
-
-  /* Spawn from pastor's mouth — fixed origin point */
-  const spawnX = areaW * 0.5;
-  const spawnY = areaH * 0.43;
-
-  const el = document.createElement('div');
-  el.className = 'word-node' + (isBonus ? ' bonus' : '');
-  el.textContent = text;
-  wordZone.appendChild(el);
-
-  /* Measure width, clamp x */
-  const elW = el.offsetWidth;
-  const x = spawnX - elW / 2;
-
-  el.style.left = x + 'px';
-  el.style.top = spawnY + 'px';
-
-  const vx = rand(-cfg.vxRange, cfg.vxRange);
-  const vy = cfg.initVy * rand(0.85, 1.15);
-
-  S.words.push({
-    id: S.nextId++,
-    text, el, isBonus,
-    x, y: spawnY, vx, vy,
-    width: elW
-  });
-}
-
-/* ===== Remove Word ===== */
-function removeWord(w, reason){
-  if(w.el && w.el.parentNode) w.el.parentNode.removeChild(w.el);
-  S.words = S.words.filter(ww => ww.id !== w.id);
-  if(reason === 'matched'){
-    S.wordsCleared++;
-    if(w.isBonus) S.bonusCleared++;
-  }
-}
-
-/* ===== Floating Score ===== */
-function showFloat(x, y, text, color){
-  const el = document.createElement('div');
-  el.className = 'float-score';
-  el.textContent = text;
-  if(color) el.style.color = color;
-  el.style.left = x + 'px';
-  el.style.top = y + 'px';
-  wordZone.appendChild(el);
-  setTimeout(()=>{ if(el.parentNode) el.parentNode.removeChild(el); }, 800);
-}
-
-/* ===== Miss Effect ===== */
-function showMissEffect(x, y){
-  const el = document.createElement('div');
-  el.className = 'miss-effect';
-  el.textContent = '💔';
-  el.style.left = x + 'px';
-  el.style.top = y + 'px';
-  wordZone.appendChild(el);
-  setTimeout(()=>{ if(el.parentNode) el.parentNode.removeChild(el); }, 600);
-}
-
-/* ===== Screen Shake ===== */
-function shakeScreen(){
-  gameArea.classList.add('shake');
-  setTimeout(()=>gameArea.classList.remove('shake'), 300);
-}
-
-/* ===== Game Loop (delta time based) ===== */
-function gameLoop(ts){
-  if(!S.running){ S.animFrame = null; return; }
-  if(S.paused){ S.lastFrame = ts; S.animFrame = requestAnimationFrame(gameLoop); return; }
-
-  let dt = (ts - S.lastFrame) / 16.667;
-  S.lastFrame = ts;
-  if(dt > 3) dt = 3;
-  if(dt < 0) dt = 0;
-
-  S.elapsed = ts - S.startTime - S.pausedTotal;
-  const cfg = DIFF[S.level];
-  S.speedMul = Math.min(cfg.maxSpeedMul, 1 + (S.elapsed/1000) * cfg.speedUp);
-
-  const areaW = wordZone.offsetWidth;
-  const areaH = wordZone.offsetHeight;
-
-  for(let i = S.words.length - 1; i >= 0; i--){
-    const w = S.words[i];
-    w.vy += cfg.gravity * S.speedMul * dt;
-    w.y += w.vy * dt;
-    w.x += w.vx * dt;
-
-    if(w.x < 0){ w.x = 0; w.vx = Math.abs(w.vx); }
-    if(w.x + w.width > areaW){ w.x = areaW - w.width; w.vx = -Math.abs(w.vx); }
-
-    w.el.style.left = w.x + 'px';
-    w.el.style.top = w.y + 'px';
-
-    if(w.y > areaH){
-      showMissEffect(w.x, areaH - 30);
-      removeWord(w, 'missed');
-      S.combo = 0;
-      S.misses++;
-      S.lives--;
-      sndMiss();
-      shakeScreen();
-      updateUI();
-      if(S.lives <= 0){ endGame(); return; }
-    }
+    S.words.push({ el, text, x, y, vy: cfg.vy, vx: (Math.random() - 0.5) * 2, isBonus });
   }
 
-  updateUI();
-  S.animFrame = requestAnimationFrame(gameLoop);
-}
+  function gameLoop(ts) {
+    if (!S.running || S.paused) { S.lastFrame = ts; S.animFrame = requestAnimationFrame(gameLoop); return; }
+    const dt = (ts - S.lastFrame) / 16.6;
+    S.lastFrame = ts;
+    S.elapsed += dt * 16.6;
 
-/* ===== Input Handling (Enter only) ===== */
-function onInput(){
-  const v = typingInput.value.trim();
-  S.totalTyped++;
-  if(!v){
-    typingInput.value = '';
-    return;
-  }
-
-  let matched = null;
-  for(const w of S.words){
-    if(w.text === v && (!matched || w.y > matched.y)) matched = w;
-  }
-
-  if(matched){
-    S.correctTyped++;
-    S.combo++;
-    if(S.combo > S.maxCombo) S.maxCombo = S.combo;
     const cfg = DIFF[S.level];
-    const comboMul = 1 + Math.floor(S.combo / 5) * 0.5;
-    let pts = Math.round(cfg.baseScore * comboMul);
-    if(matched.isBonus){
-      pts *= cfg.bonusMul;
-      sndBonus();
-    } else {
-      sndMatch();
-    }
-    S.score += pts;
-    showFloat(matched.x, matched.y, '+' + pts, matched.isBonus ? '#ffd700' : '#2ecc71');
-    removeWord(matched, 'matched');
-  } else {
-    S.combo = 0;
-  }
+    for (let i = S.words.length - 1; i >= 0; i--) {
+      const w = S.words[i];
+      w.vy += cfg.gravity * dt;
+      w.y += w.vy * dt;
+      w.x += w.vx * dt;
+      w.el.style.top = w.y + 'px';
+      w.el.style.left = w.x + 'px';
 
-  typingInput.value = '';
-  updateUI();
-}
-
-/* ===== Countdown ===== */
-function startCountdown(cb){
-  const overlay = startOverlay;
-  overlay.classList.remove('hidden');
-  let count = 3;
-  overlay.querySelector('.big-text').textContent = count;
-  overlay.querySelector('.small-text').textContent = '준비하세요!';
-  typingInput.disabled = true;
-
-  const timer = setInterval(()=>{
-    count--;
-    if(count > 0){
-      overlay.querySelector('.big-text').textContent = count;
-      playTone(660, 0.1, 'sine', 0.1);
-    } else if(count === 0){
-      overlay.querySelector('.big-text').textContent = '시작!';
-      playTone(880, 0.15, 'sine', 0.15);
-    } else {
-      clearInterval(timer);
-      overlay.classList.add('hidden');
-      cb();
-    }
-  }, 800);
-}
-
-/* ===== Game Init ===== */
-function initGame(){
-  if(S.running) stopGame();
-
-  const cfg = DIFF[S.level];
-  S.running = false;
-  S.paused = false;
-  S.score = 0;
-  S.combo = 0;
-  S.maxCombo = 0;
-  S.misses = 0;
-  S.lives = cfg.lives;
-  S.maxLives = cfg.lives;
-  S.wordsCleared = 0;
-  S.bonusCleared = 0;
-  S.totalTyped = 0;
-  S.correctTyped = 0;
-  S.words = [];
-  S.nextId = 0;
-  S.speedMul = 1;
-  S.elapsed = 0;
-  S.pausedTotal = 0;
-  S.lastFrame = 0;
-
-  wordZone.innerHTML = '';
-  pauseOverlay.classList.remove('visible');
-  typingInput.value = '';
-
-  document.body.classList.add('game-running');
-  btnStart.disabled = true;
-  btnPause.disabled = true;
-  btnStop.disabled = true;
-
-
-  $$('.diff-btn').forEach(b => b.disabled = true);
-  updateUI();
-
-  startCountdown(()=>{
-    S.running = true;
-    S.startTime = performance.now();
-    S.lastFrame = S.startTime;
-    typingInput.disabled = false;
-    typingInput.focus();
-    btnPause.disabled = false;
-    btnStop.disabled = false;
-
-    S.spawnTimer = setInterval(spawnWord, cfg.spawnInt);
-    spawnWord();
-    S.animFrame = requestAnimationFrame(gameLoop);
-  });
-}
-
-/* ===== Pause ===== */
-function pauseGame(){
-  if(!S.running) return;
-
-  if(!S.paused){
-    S.paused = true;
-    S.pauseStart = performance.now();
-    pauseOverlay.classList.add('visible');
-    typingInput.disabled = true;
-    btnPause.textContent = '▶ 계속';
-  } else {
-    S.pausedTotal += performance.now() - S.pauseStart;
-    S.paused = false;
-    S.lastFrame = performance.now();
-    pauseOverlay.classList.remove('visible');
-    typingInput.disabled = false;
-    typingInput.focus();
-    btnPause.textContent = '⏸ 일시정지';
-  }
-}
-
-/* ===== Stop ===== */
-function stopGame(){
-  S.running = false;
-  S.paused = false;
-
-  if(S.spawnTimer){
-    clearInterval(S.spawnTimer);
-    S.spawnTimer = null;
-  }
-  if(S.animFrame){
-    cancelAnimationFrame(S.animFrame);
-    S.animFrame = null;
-  }
-
-  wordZone.innerHTML = '';
-  S.words = [];
-  startOverlay.classList.remove('hidden');
-  startOverlay.querySelector('.big-text').textContent = '✝ 말씀 타이핑 ✝';
-  startOverlay.querySelector('.small-text').textContent = '오른쪽에서 난이도를 선택하고 시작하세요';
-  pauseOverlay.classList.remove('visible');
-  typingInput.disabled = true;
-  typingInput.value = '';
-
-  document.body.classList.remove('game-running');
-  btnStart.disabled = false;
-  btnPause.disabled = true;
-  btnPause.textContent = '⏸ 일시정지';
-  btnStop.disabled = true;
-
-
-  $$('.diff-btn').forEach(b => b.disabled = false);
-  updateUI();
-}
-
-/* ===== End Game ===== */
-function endGame(){
-  S.running = false;
-  S.paused = false;
-
-  if(S.spawnTimer){
-    clearInterval(S.spawnTimer);
-    S.spawnTimer = null;
-  }
-  if(S.animFrame){
-    cancelAnimationFrame(S.animFrame);
-    S.animFrame = null;
-  }
-
-  typingInput.disabled = true;
-  sndGameOver();
-
-  const acc = S.totalTyped > 0 ? Math.round((S.correctTyped / S.totalTyped) * 100) : 0;
-  const secs = Math.max(1, S.elapsed / 1000);
-  const wpm = Math.round((S.wordsCleared / secs) * 60);
-
-  goStats.innerHTML = `
-    <div class="modal-stat"><div class="label">점수</div><div class="value">${S.score}</div></div>
-    <div class="modal-stat"><div class="label">난이도</div><div class="value">${LEVEL_LABELS[S.level]}</div></div>
-    <div class="modal-stat"><div class="label">시간</div><div class="value">${fmtTime(S.elapsed)}</div></div>
-    <div class="modal-stat"><div class="label">처리 단어</div><div class="value">${S.wordsCleared}</div></div>
-    <div class="modal-stat"><div class="label">보너스</div><div class="value">${S.bonusCleared}</div></div>
-    <div class="modal-stat"><div class="label">최대 콤보</div><div class="value">${S.maxCombo}</div></div>
-    <div class="modal-stat"><div class="label">정확도</div><div class="value">${acc}%</div></div>
-    <div class="modal-stat"><div class="label">WPM</div><div class="value">${wpm}</div></div>
-  `;
-
-  let msg = '';
-  if(S.score >= 500) msg = '🌟 놀라운 실력입니다! 하나님께서 기뻐하십니다!';
-  else if(S.score >= 300) msg = '👏 잘하셨습니다! 말씀으로 무장하고 계시네요!';
-  else if(S.score >= 100) msg = '💪 좋은 시작입니다! 계속 연습하세요!';
-  else msg = '🙏 포기하지 마세요! 다시 도전해보세요!';
-  goMsg.textContent = msg;
-
-  goNick.value = '';
-  goModal.classList.add('visible');
-}
-
-/* ===== Rankings ===== */
-const RK_KEY = 'church_typing_rankings';
-
-function loadLocalRanks(){
-  try{
-    return JSON.parse(localStorage.getItem(RK_KEY)) || {};
-  }catch(e){
-    return {};
-  }
-}
-
-function saveLocalRanks(data){
-  try{
-    localStorage.setItem(RK_KEY, JSON.stringify(data));
-  }catch(e){}
-}
-
-function normalizeRankEntry(entry, fallbackLevel){
-  return {
-    id: entry.id || `${entry.ts || Date.now()}_${entry.nick || '익명'}`,
-    nick: entry.nick || '익명',
-    score: Number(entry.score) || 0,
-    level: entry.level || fallbackLevel || 'kids',
-    words: Number(entry.words) || 0,
-    combo: Number(entry.combo) || 0,
-    accuracy: Number(entry.accuracy) || 0,
-    time: entry.time || '0:00',
-    ts: Number(entry.ts) || Date.now()
-  };
-}
-
-function dedupeAndSortRanks(list){
-  const map = new Map();
-
-  list.forEach(raw => {
-    const e = normalizeRankEntry(raw, raw.level);
-    const key = e.id || `${e.ts}_${e.nick}`;
-    if(!map.has(key)){
-      map.set(key, e);
-    }
-  });
-
-  return [...map.values()].sort((a,b)=>{
-    if(b.score !== a.score) return b.score - a.score;
-    if((b.combo || 0) !== (a.combo || 0)) return (b.combo || 0) - (a.combo || 0);
-    if((b.accuracy || 0) !== (a.accuracy || 0)) return (b.accuracy || 0) - (a.accuracy || 0);
-    return (a.ts || 0) - (b.ts || 0);
-  });
-}
-
-async function fbPush(level, entry){
-  if(!useFirebase) return;
-  try{
-    await fetch(`${FIREBASE_DB_URL}/rankings/${level}.json`, {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify(entry)
-    });
-  }catch(e){
-    console.warn('Firebase push failed:', e);
-  }
-}
-
-async function fbGet(level){
-  if(!useFirebase) return [];
-  try{
-    const r = await fetch(`${FIREBASE_DB_URL}/rankings/${level}.json`);
-    const d = await r.json();
-    if(!d) return [];
-    return Object.values(d).map(v => normalizeRankEntry(v, level));
-  }catch(e){
-    console.warn('Firebase get failed:', e);
-    return [];
-  }
-}
-
-async function fbClearAll(){
-  if(!useFirebase) return true;
-  try{
-    await fetch(`${FIREBASE_DB_URL}/rankings.json`, {
-      method:'DELETE'
-    });
-    return true;
-  }catch(e){
-    console.warn('Firebase clear failed:', e);
-    return false;
-  }
-}
-
-async function getFullRanks(level){
-  const local = loadLocalRanks();
-  const localList = (local[level] || []).map(e => normalizeRankEntry(e, level));
-
-  if(useFirebase){
-    const fbList = await fbGet(level);
-    return dedupeAndSortRanks([...localList, ...fbList]);
-  }
-
-  return dedupeAndSortRanks(localList);
-}
-
-async function getFullRanksAll(){
-  const levels = ['kids','elem','junior','youth','adult'];
-  let merged = [];
-
-  for(const lv of levels){
-    const items = await getFullRanks(lv);
-    merged.push(...items);
-  }
-
-  return dedupeAndSortRanks(merged);
-}
-
-async function saveRank(nick){
-  const entry = {
-    id: Date.now().toString(36) + Math.random().toString(36).slice(2,8),
-    nick,
-    score: S.score,
-    level: S.level,
-    words: S.wordsCleared,
-    combo: S.maxCombo,
-    accuracy: S.totalTyped > 0 ? Math.round((S.correctTyped / S.totalTyped) * 100) : 0,
-    time: fmtTime(S.elapsed),
-    ts: Date.now()
-  };
-
-  /* Local: 전체 순위 계산을 위해 많이 저장 */
-  const local = loadLocalRanks();
-  if(!local[S.level]) local[S.level] = [];
-  local[S.level].push(entry);
-  local[S.level] = dedupeAndSortRanks(local[S.level]).slice(0, 3000);
-  saveLocalRanks(local);
-
-  /* Firebase */
-  await fbPush(S.level, entry);
-
-  /* 내 순위 계산 */
-  const levelRanks = await getFullRanks(S.level);
-  const allRanks = await getFullRanksAll();
-
-  lastSavedRankInfo = {
-    id: entry.id,
-    level: entry.level,
-    levelRank: levelRanks.findIndex(e => e.id === entry.id) + 1,
-    allRank: allRanks.findIndex(e => e.id === entry.id) + 1
-  };
-}
-
-function renderMyRankBox(filterLevel){
-  let myRank = null;
-  let label = '내 순위';
-
-  if(lastSavedRankInfo){
-    if(filterLevel === 'all'){
-      myRank = lastSavedRankInfo.allRank;
-      label = '내 순위 (전체)';
-    }else if(filterLevel === lastSavedRankInfo.level){
-      myRank = lastSavedRankInfo.levelRank;
-      label = `내 순위 (${LEVEL_LABELS[filterLevel]})`;
-    }
-  }
-
-  if(myRank && myRank > 0){
-    myRankBox.style.display = 'block';
-    myRankBox.innerHTML = `
-      <div class="label">${label}</div>
-      <div class="value">${myRank}위</div>
-    `;
-  }else{
-    myRankBox.style.display = 'none';
-    myRankBox.innerHTML = `
-      <div class="label">내 순위</div>
-      <div class="value">-</div>
-    `;
-  }
-}
-
-async function showRankingModal(filterLevel){
-  const levels = ['kids','elem','junior','youth','adult'];
-
-  /* Build filter buttons */
-  rkFilter.innerHTML = '';
-
-  const allBtn = document.createElement('button');
-  allBtn.textContent = '전체';
-  allBtn.className = filterLevel === 'all' ? 'active' : '';
-  allBtn.addEventListener('click', ()=> showRankingModal('all'));
-  rkFilter.appendChild(allBtn);
-
-  for(const lv of levels){
-    const btn = document.createElement('button');
-    btn.textContent = LEVEL_LABELS[lv];
-    btn.className = filterLevel === lv ? 'active' : '';
-    btn.addEventListener('click', ()=> showRankingModal(lv));
-    rkFilter.appendChild(btn);
-  }
-
-  /* 전체 데이터 확보 */
-  let fullList = [];
-  if(filterLevel === 'all'){
-    fullList = await getFullRanksAll();
-  } else {
-    fullList = await getFullRanks(filterLevel);
-  }
-
-  /* 표에는 1~10위만 */
-  const top10 = fullList.slice(0, 10);
-
-  rkBody.innerHTML = '';
-
-  if(top10.length === 0){
-    rkBody.innerHTML = '<tr><td colspan="6" style="padding:20px;color:var(--color-muted);">기록이 없습니다</td></tr>';
-  } else {
-    top10.forEach((e, i) => {
-      const medal = i===0 ? '🥇' : i===1 ? '🥈' : i===2 ? '🥉' : (i+1);
-      const tr = document.createElement('tr');
-
-      if(lastSavedRankInfo && e.id === lastSavedRankInfo.id){
-        tr.classList.add('mine');
+      if (w.y > wordZone.offsetHeight) {
+        wordZone.removeChild(w.el);
+        S.words.splice(i, 1);
+        S.lives--;
+        S.combo = 0;
+        updateUI();
+        if (S.lives <= 0) endGame();
       }
-
-      tr.innerHTML = `
-        <td class="medal">${medal}</td>
-        <td>${e.nick||'익명'}</td>
-        <td style="font-weight:700;color:var(--color-accent)">${e.score}</td>
-        <td>${e.combo||0}</td>
-        <td>${e.accuracy||0}%</td>
-        <td>${LEVEL_LABELS[e.level]||e.level}</td>
-      `;
-      rkBody.appendChild(tr);
-    });
+    }
+    updateUI();
+    S.animFrame = requestAnimationFrame(gameLoop);
   }
 
-  renderMyRankBox(filterLevel);
-  rkModal.classList.add('visible');
-}
+  function updateUI() {
+    $('#scoreVal').textContent = S.score;
+    $('#comboVal').textContent = S.combo;
+    $('#livesVal').textContent = '♥'.repeat(S.lives) + '♡'.repeat(DIFF[S.level].lives - S.lives);
+    const sec = Math.floor(S.elapsed / 1000);
+    $('#timeVal').textContent = `${Math.floor(sec/60)}:${(sec%60).toString().padStart(2,'0')}`;
+  }
 
-/* ===== Event Bindings ===== */
+  function initGame() {
+    S.running = true; S.score = 0; S.combo = 0; S.lives = DIFF[S.level].lives; S.elapsed = 0; S.words = [];
+    wordZone.innerHTML = '';
+    $('#startOverlay').classList.add('hidden');
+    typingInput.disabled = false; typingInput.focus();
+    $('#btnStart').disabled = true; $('#btnPause').disabled = false;
+    S.lastFrame = performance.now();
+    S.spawnTimer = setInterval(spawnWord, DIFF[S.level].spawnInt);
+    S.animFrame = requestAnimationFrame(gameLoop);
+  }
 
-/* Difficulty selection */
+  function endGame() {
+    S.running = false; clearInterval(S.spawnTimer); cancelAnimationFrame(S.animFrame);
+    typingInput.disabled = true;
+    $('#goStats').innerHTML = `<div>점수: ${S.score}</div><div>난이도: ${S.level}</div>`;
+    $('#goModal').classList.add('visible');
+  }
 
-$$('.diff-btn').forEach(btn => {
-  btn.addEventListener('click', ()=>{
-    if(btn.disabled) return;
-    S.level = btn.dataset.level;
-    updateDiffBtns();
+  /* --- 랭킹 시스템 --- */
+  function saveRank(nick) {
+    const ranks = JSON.parse(localStorage.getItem('church_ranks') || '[]');
+    ranks.push({ nick, score: S.score, level: S.level, ts: Date.now() });
+    ranks.sort((a,b) => b.score - a.score);
+    localStorage.setItem('church_ranks', JSON.stringify(ranks.slice(0, 10)));
+  }
+
+  function showRanks() {
+    const ranks = JSON.parse(localStorage.getItem('church_ranks') || '[]');
+    $('#rkBody').innerHTML = ranks.map((r, i) => `<tr><td>${i+1}</td><td>${r.nick}</td><td>${r.score}</td><td>${r.level}</td></tr>`).join('');
+    $('#rkModal').classList.add('visible');
+  }
+
+  /* --- 이벤트 바인딩 --- */
+  $('#btnStart').onclick = initGame;
+  $('#btnPause').onclick = () => { S.paused = !S.paused; $('#pauseOverlay').style.display = S.paused ? 'flex' : 'none'; };
+  $('#btnRanking').onclick = showRanks;
+  $('#rkClose').onclick = () => $('#rkModal').classList.remove('visible');
+  
+  // 랭킹 초기화 버튼 (관리자 전용)
+  $('#rkClear').onclick = () => {
+    const pw = prompt("관리자 비밀번호를 입력하세요:");
+    if (pw === ADMIN_PASSWORD) {
+      if (confirm("정말로 모든 랭킹을 초기화하시겠습니까?")) {
+        localStorage.removeItem('church_ranks');
+        alert("초기화되었습니다.");
+        showRanks();
+      }
+    } else if (pw !== null) {
+      alert("비밀번호가 틀렸습니다.");
+    }
+  };
+
+  typingInput.onkeydown = e => {
+    if (e.key === 'Enter') {
+      const val = typingInput.value.trim();
+      const idx = S.words.findIndex(w => w.text === val);
+      if (idx > -1) {
+        const w = S.words[idx];
+        S.score += DIFF[S.level].score + (S.combo * 2);
+        S.combo++;
+        wordZone.removeChild(w.el);
+        S.words.splice(idx, 1);
+      } else { S.combo = 0; }
+      typingInput.value = '';
+      updateUI();
+    }
+  };
+
+  document.querySelectorAll('.diff-btn').forEach(btn => {
+    btn.onclick = () => {
+      document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      S.level = btn.dataset.level;
+    };
   });
-});
 
-/* Game controls */
-btnStart.addEventListener('click', initGame);
-btnPause.addEventListener('click', pauseGame);
-btnStop.addEventListener('click', stopGame);
-btnRanking.addEventListener('click', ()=> showRankingModal('all'));
-
-/* Input: Enter only */
-typingInput.addEventListener('keydown', e => {
-  if(e.key === 'Enter'){
-    e.preventDefault();
-    if(S.running && !S.paused) onInput();
-  }
-  if(e.key === 'Escape'){
-    typingInput.value = '';
-  }
-});
-
-/* Fullscreen */
-btnFullscreen.addEventListener('click', ()=>{
-  if(!document.fullscreenElement){
-    document.documentElement.requestFullscreen().catch(()=>{});
-  } else {
-    document.exitFullscreen().catch(()=>{});
-  }
-});
-document.addEventListener('keydown', e => {
-  if(e.key === 'f' && !S.running && document.activeElement !== typingInput){
-    if(!document.fullscreenElement) document.documentElement.requestFullscreen().catch(()=>{});
-    else document.exitFullscreen().catch(()=>{});
-  }
-});
-
-/* Sound toggle */
-btnSound.addEventListener('click', ()=>{
-  S.soundEnabled = !S.soundEnabled;
-  btnSound.textContent = S.soundEnabled ? '🔊' : '🔇';
-});
-
-/* Game Over modal */
-goSave.addEventListener('click', async ()=>{
-  const nick = goNick.value.trim() || '익명';
-  await saveRank(nick);
-  goModal.classList.remove('visible');
-
-  /* Cleanup game state and show ranking */
-  wordZone.innerHTML = '';
-  S.words = [];
-  startOverlay.classList.remove('hidden');
-  startOverlay.querySelector('.big-text').textContent = '✝ 말씀 타이핑 ✝';
-  startOverlay.querySelector('.small-text').textContent = '오른쪽에서 난이도를 선택하고 시작하세요';
-  document.body.classList.remove('game-running');
-  btnStart.disabled = false;
-  btnPause.disabled = true;
-  btnPause.textContent = '⏸ 일시정지';
-  btnStop.disabled = true;
-
-
-  $$('.diff-btn').forEach(b => b.disabled = false);
-  await showRankingModal(S.level);
-});
-
-goSkip.addEventListener('click', ()=>{
-  goModal.classList.remove('visible');
-  wordZone.innerHTML = '';
-  S.words = [];
-  startOverlay.classList.remove('hidden');
-  startOverlay.querySelector('.big-text').textContent = '✝ 말씀 타이핑 ✝';
-  startOverlay.querySelector('.small-text').textContent = '오른쪽에서 난이도를 선택하고 시작하세요';
-  document.body.classList.remove('game-running');
-  btnStart.disabled = false;
-  btnPause.disabled = true;
-  btnPause.textContent = '⏸ 일시정지';
-  btnStop.disabled = true;
-
-
-  $$('.diff-btn').forEach(b => b.disabled = false);
-});
-
-/* Ranking modal */
-rkClose.addEventListener('click', ()=> rkModal.classList.remove('visible'));
-
-rkClear.addEventListener('click', async ()=>{
-  if(confirm('모든 랭킹 데이터를 삭제하시겠습니까?')){
-    localStorage.removeItem(RK_KEY);
-    await fbClearAll();
-    lastSavedRankInfo = null;
-    await showRankingModal('all');
-  }
-});
-
-/* Close modals on backdrop click */
-goModal.addEventListener('click', e => {
-  if(e.target === goModal){
-    /* do nothing, require button */
-  }
-});
-rkModal.addEventListener('click', e => {
-  if(e.target === rkModal) rkModal.classList.remove('visible');
-});
-
-/* Escape closes modals */
-document.addEventListener('keydown', e => {
-  if(e.key === 'Escape'){
-    if(rkModal.classList.contains('visible')) rkModal.classList.remove('visible');
-    if(S.running && !S.paused) typingInput.focus();
-  }
-});
-
-/* Initial state */
-updateUI();
-updateDiffBtns();
-
+  $('#goSave').onclick = () => { saveRank($('#goNick').value || '익명'); $('#goModal').classList.remove('visible'); showRanks(); $('#btnStart').disabled = false; };
+  $('#goSkip').onclick = () => { $('#goModal').classList.remove('visible'); $('#btnStart').disabled = false; };
 })();
 </script>
 </body>
