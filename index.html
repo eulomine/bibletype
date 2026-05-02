@@ -26,7 +26,6 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
 
 /* ===== Layout ===== */
 #app{ display:flex; width:100%; height:100%; flex-direction:row; }
-
 .game-panel{ flex:1; display:flex; flex-direction:column; position:relative; min-width:0; height:100%; }
 .game-area{ flex:1; position:relative; background:url('https://www.dropbox.com/scl/fi/5v49jobvr49qtognpngjb/background-church.png?rlkey=doov91nti27jnmito24hc2f21&st=450qi53g&raw=1') center center/cover no-repeat; overflow:hidden; }
 .game-overlay{ position:absolute;inset:0; background:linear-gradient(180deg,rgba(15,14,23,.15) 0%,rgba(15,14,23,.35) 100%); pointer-events:none;z-index:1; }
@@ -49,13 +48,14 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
 }
 .input-bar input:focus{border-color:var(--color-primary);}
 .btn-icon{ width:40px;height:40px; border:none;border-radius:var(--radius); background:var(--color-surface2); color:var(--color-text); font-size:18px;cursor:pointer; transition:var(--transition); flex-shrink:0; }
-.btn-icon:hover{background:var(--color-primary);}
 
 .side-panel{ width:300px; display:flex;flex-direction:column; background:var(--color-surface); border-left:2px solid var(--color-surface2); height:100%; overflow-y:auto; }
 .side-header{ padding:16px;text-align:center; background:var(--color-surface2); }
 .side-header h1{font-size:20px;color:var(--color-accent);}
+.side-header .verse{font-size:12px;color:var(--color-muted);margin-top:4px;}
 
 .diff-section{padding:12px;}
+.diff-section h3{font-size:13px;color:var(--color-muted);margin-bottom:8px;}
 .diff-btn{
   display:block;width:100%; padding:10px;margin-bottom:6px; border:2px solid var(--color-surface2);
   border-radius:var(--radius); background:var(--color-bg); color:var(--color-text); cursor:pointer; text-align:left; transition:var(--transition);
@@ -105,8 +105,9 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
     <div class="game-area" id="gameArea">
       <div class="game-overlay"></div>
       <div class="status-bar" id="statusBar">
-        <div class="stat">🏆<span class="val" id="scoreVal">0</span></div>
-        <div class="stat">🔥<span class="val" id="comboVal">0</span></div>
+        <div class="stat">🏆점수 <span class="val" id="scoreVal">0</span></div>
+        <div class="stat">🔥콤보 <span class="val" id="comboVal">0</span></div>
+        <div class="stat">❌미스 <span class="val" id="missVal">0</span></div>
         <div class="stat">💧<span class="lives-display" id="livesVal">♥♥♥♥♥</span></div>
         <div class="stat">⏱<span class="val" id="timeVal">0:00</span></div>
       </div>
@@ -118,23 +119,32 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
       <div class="pause-overlay" id="pauseOverlay"><div style="font-size:28px; color:var(--color-accent);">⏸ 일시정지</div></div>
     </div>
     <div class="input-bar">
-      <input type="text" id="typingInput" placeholder="단어 입력 후 Enter ↵" disabled>
+      <input type="text" id="typingInput" placeholder="단어 입력 후 Enter ↵" autocomplete="off" disabled>
+      <button class="btn-icon" id="btnFullscreen">⛶</button>
       <button class="btn-icon" id="btnSound">🔊</button>
     </div>
   </div>
 
   <div class="side-panel">
-    <div class="side-header"><h1>말씀 타이핑</h1></div>
+    <div class="side-header">
+      <h1>✝ 말씀 타이핑 ✝</h1>
+      <p class="verse" id="headerVerse"></p>
+    </div>
     <div class="diff-section">
-      <button class="diff-btn active" data-level="kids"><span class="label">유년꿈터</span><span class="sub">가운데줄 위주</span></button>
-      <button class="diff-btn" data-level="elem"><span class="label">초등꿈터</span><span class="sub">기본 단어</span></button>
-      <button class="diff-btn" data-level="adult"><span class="label">교구국</span><span class="sub">최고 난이도</span></button>
+      <h3>난이도 선택</h3>
+      <button class="diff-btn active" data-level="kids"><span class="label">유년꿈터</span><span class="sub">가운데줄 · ★☆☆☆☆</span></button>
+      <button class="diff-btn" data-level="elem"><span class="label">초등꿈터</span><span class="sub">Shift 없음 · ★★☆☆☆</span></button>
+      <button class="diff-btn" data-level="junior"><span class="label">소년꿈터</span><span class="sub">Shift 포함 · ★★★☆☆</span></button>
+      <button class="diff-btn" data-level="youth"><span class="label">청소년부</span><span class="sub">빠른 속도 · ★★★★☆</span></button>
+      <button class="diff-btn" data-level="adult"><span class="label">교구국</span><span class="sub">최고 난이도 · ★★★★★</span></button>
     </div>
     <div class="ctrl-section">
       <button class="ctrl-btn start" id="btnStart">▶ 시작</button>
       <button class="ctrl-btn" id="btnPause" disabled style="background:var(--color-surface2); color:#fff;">⏸ 일시정지</button>
+      <button class="ctrl-btn" id="btnStop" disabled style="background:var(--color-danger); color:#fff;">■ 중지</button>
       <button class="ctrl-btn rank" id="btnRanking">🏅 랭킹</button>
     </div>
+    <div id="verseBanner" style="padding:12px; text-align:center; font-size:12px; color:var(--color-muted); margin-top:auto;"></div>
   </div>
 </div>
 
@@ -142,10 +152,10 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
 <div class="modal-backdrop" id="goModal">
   <div class="modal">
     <h2 style="text-align:center; color:var(--color-accent);">🙏 게임 종료</h2>
-    <div id="goStats" style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:20px 0;"></div>
-    <input type="text" id="goNick" placeholder="닉네임을 입력하세요" style="width:100%; padding:10px; margin-bottom:15px; background:var(--color-bg); border:1px solid var(--color-surface2); color:#fff;">
-    <div style="display:flex; gap:10px;">
-      <button id="goSave" style="flex:1; padding:10px; background:var(--color-primary); color:#fff; border:none; border-radius:5px; cursor:pointer;">저장 & 랭킹</button>
+    <div id="goStats" style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:20px 0;"></div>
+    <input type="text" id="goNick" placeholder="닉네임을 입력하세요" maxlength="12" style="width:100%; padding:10px; margin-bottom:12px; background:var(--color-bg); border:1px solid var(--color-surface2); color:#fff;">
+    <div style="display:flex; gap:8px;">
+      <button id="goSave" style="flex:1; padding:10px; background:var(--color-primary); color:#fff; border:none; border-radius:5px; cursor:pointer; font-weight:bold;">저장 & 랭킹보기</button>
       <button id="goSkip" style="flex:1; padding:10px; background:var(--color-surface2); color:#fff; border:none; border-radius:5px; cursor:pointer;">건너뛰기</button>
     </div>
   </div>
@@ -156,7 +166,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
   <div class="modal" style="max-width:560px;">
     <h2 style="text-align:center; color:var(--color-accent);">🏅 랭킹</h2>
     <table class="rank-table">
-      <thead><tr><th>순위</th><th>닉네임</th><th>점수</th><th>난이도</th></tr></thead>
+      <thead><tr><th>#</th><th>닉네임</th><th>점수</th><th>콤보</th><th>난이도</th></tr></thead>
       <tbody id="rkBody"></tbody>
     </table>
     <div class="rank-clear" style="text-align:center;"><button id="rkClear">🗑 랭킹 초기화 (관리자)</button></div>
@@ -167,67 +177,93 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
 <script>
 (() => {
   /* --- 관리자 설정 --- */
-  const ADMIN_PASSWORD = "church1234"; // 랭킹 초기화 비밀번호
+  const ADMIN_PASSWORD = "church1234"; 
 
+  const VERSES = ['항상 기뻐하라','쉬지 말고 기도하라','범사에 감사하라','여호와는 나의 목자시니','네 마음을 다하여 여호와를 신뢰하라'];
+  const LEVEL_LABELS = {kids:'유년꿈터', elem:'초등꿈터', junior:'소년꿈터', youth:'청소년부', adult:'교구국'};
+  
   const WORD_BANK = {
-    kids: { normal: ['하나님','아멘','나라','노아','하늘','마음','인내','우리','노래'], bonus: ['하나님나라'] },
-    elem: { normal: ['사랑','감사','기도','교회','믿음','소망','구원','찬양','성경'], bonus: ['예수님','신광교회'] },
-    adult: { normal: ['예수그리스도','십자가','부활절','성령충만','사도행전','여호와이레','임마누엘'], bonus: ['이리신광교회','항상 기뻐하라'] }
+    kids: { normal: ['하나님','아멘','나라','노아','하늘','마음','우리','노래','하나','어머니'], bonus: ['하나님나라','여호수아'] },
+    elem: { normal: ['사랑','감사','기도','교회','믿음','소망','구원','찬양','성경','복음','축복','성도'], bonus: ['예수님','신광교회'] },
+    junior: { normal: ['예배','말씀','은혜','기쁨','십자가','부활절','영광','거룩','임마누엘','창세기'], bonus: ['예수 그리스도','십자가 사랑'] },
+    youth: { normal: ['회개','거듭남','성찬','헌금','전도','주기도문','사도신경','여호와이레','여호와닛시'], bonus: ['항상 기뻐하라','범사에 감사하라'] },
+    adult: { normal: ['성령충만','예수그리스도','사도행전','출애굽기','신명기','산상수훈','성령의열매'], bonus: ['내 삶은 주의 것','이리신광교회'] }
   };
 
   const DIFF = {
-    kids: { lives: 5, spawnInt: 2500, vy: -1.8, gravity: 0.02, score: 10, bonusChance: 0.1 },
-    elem: { lives: 5, spawnInt: 2000, vy: -2.2, gravity: 0.03, score: 20, bonusChance: 0.12 },
-    adult: { lives: 5, spawnInt: 1200, vy: -3.2, gravity: 0.04, score: 40, bonusChance: 0.15 }
+    kids:   { lives:5, spawnInt:2800, vy:-1.8, gravity:0.018, score:10, bonusChance:0.10 },
+    elem:   { lives:5, spawnInt:2400, vy:-2.2, gravity:0.022, score:15, bonusChance:0.12 },
+    junior: { lives:5, spawnInt:2000, vy:-2.6, gravity:0.028, score:20, bonusChance:0.12 },
+    youth:  { lives:5, spawnInt:1500, vy:-3.0, gravity:0.035, score:25, bonusChance:0.14 },
+    adult:  { lives:5, spawnInt:1100, vy:-3.5, gravity:0.042, score:35, bonusChance:0.15 }
   };
 
   let S = { 
-    level: 'kids', running: false, paused: false, score: 0, combo: 0, lives: 5, 
-    words: [], startTime: 0, elapsed: 0, animFrame: null, spawnTimer: null, lastFrame: 0 
+    level: 'kids', running: false, paused: false, score: 0, combo: 0, maxCombo: 0, misses: 0, lives: 5, 
+    words: [], startTime: 0, elapsed: 0, animFrame: null, spawnTimer: null, lastFrame: 0, soundEnabled: true
   };
 
   const $ = s => document.querySelector(s);
   const wordZone = $('#wordZone'), typingInput = $('#typingInput');
 
+  function updateUI() {
+    $('#scoreVal').textContent = S.score;
+    $('#comboVal').textContent = S.combo;
+    $('#missVal').textContent = S.misses;
+    $('#livesVal').textContent = '♥'.repeat(S.lives) + '♡'.repeat(DIFF[S.level].lives - S.lives);
+    const sec = Math.floor(S.elapsed / 1000);
+    $('#timeVal').textContent = `${Math.floor(sec/60)}:${(sec%60).toString().padStart(2,'0')}`;
+  }
+
   function spawnWord() {
     if (!S.running || S.paused) return;
     const cfg = DIFF[S.level], bank = WORD_BANK[S.level];
     const isBonus = Math.random() < cfg.bonusChance;
-    const text = isBonus ? bank.bonus[0] : bank.normal[Math.floor(Math.random() * bank.normal.length)];
+    const text = isBonus ? bank.bonus[Math.floor(Math.random()*bank.bonus.length)] : bank.normal[Math.floor(Math.random()*bank.normal.length)];
     
     const el = document.createElement('div');
     el.className = 'word-node' + (isBonus ? ' bonus' : '');
     el.textContent = text;
     wordZone.appendChild(el);
 
-    const x = Math.random() * (wordZone.offsetWidth - 100);
-    const y = wordZone.offsetHeight * 0.4;
-    el.style.left = x + 'px';
-    el.style.top = y + 'px';
+    const spawnX = wordZone.offsetWidth * 0.5;
+    const spawnY = wordZone.offsetHeight * 0.43; // 목사님 입 위치 부근
+    const elW = el.offsetWidth;
+    const x = spawnX - elW / 2;
 
-    S.words.push({ el, text, x, y, vy: cfg.vy, vx: (Math.random() - 0.5) * 2, isBonus });
+    el.style.left = x + 'px';
+    el.style.top = spawnY + 'px';
+
+    S.words.push({ el, text, x, y: spawnY, vy: cfg.vy, vx: (Math.random() - 0.5) * 2.5, isBonus });
   }
 
   function gameLoop(ts) {
-    if (!S.running || S.paused) { S.lastFrame = ts; S.animFrame = requestAnimationFrame(gameLoop); return; }
+    if (!S.running) return;
+    if (S.paused) { S.lastFrame = ts; S.animFrame = requestAnimationFrame(gameLoop); return; }
+
     const dt = (ts - S.lastFrame) / 16.6;
     S.lastFrame = ts;
     S.elapsed += dt * 16.6;
 
     const cfg = DIFF[S.level];
+    const areaH = wordZone.offsetHeight;
+    const areaW = wordZone.offsetWidth;
+
     for (let i = S.words.length - 1; i >= 0; i--) {
       const w = S.words[i];
       w.vy += cfg.gravity * dt;
       w.y += w.vy * dt;
       w.x += w.vx * dt;
+
+      if(w.x < 0 || w.x + w.el.offsetWidth > areaW) w.vx *= -1;
+
       w.el.style.top = w.y + 'px';
       w.el.style.left = w.x + 'px';
 
-      if (w.y > wordZone.offsetHeight) {
+      if (w.y > areaH) {
         wordZone.removeChild(w.el);
         S.words.splice(i, 1);
-        S.lives--;
-        S.combo = 0;
+        S.lives--; S.misses++; S.combo = 0;
         updateUI();
         if (S.lives <= 0) endGame();
       }
@@ -236,20 +272,13 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
     S.animFrame = requestAnimationFrame(gameLoop);
   }
 
-  function updateUI() {
-    $('#scoreVal').textContent = S.score;
-    $('#comboVal').textContent = S.combo;
-    $('#livesVal').textContent = '♥'.repeat(S.lives) + '♡'.repeat(DIFF[S.level].lives - S.lives);
-    const sec = Math.floor(S.elapsed / 1000);
-    $('#timeVal').textContent = `${Math.floor(sec/60)}:${(sec%60).toString().padStart(2,'0')}`;
-  }
-
   function initGame() {
-    S.running = true; S.score = 0; S.combo = 0; S.lives = DIFF[S.level].lives; S.elapsed = 0; S.words = [];
+    S.running = true; S.paused = false; S.score = 0; S.combo = 0; S.maxCombo = 0; S.misses = 0;
+    S.lives = DIFF[S.level].lives; S.elapsed = 0; S.words = [];
     wordZone.innerHTML = '';
     $('#startOverlay').classList.add('hidden');
     typingInput.disabled = false; typingInput.focus();
-    $('#btnStart').disabled = true; $('#btnPause').disabled = false;
+    $('#btnStart').disabled = true; $('#btnPause').disabled = false; $('#btnStop').disabled = false;
     S.lastFrame = performance.now();
     S.spawnTimer = setInterval(spawnWord, DIFF[S.level].spawnInt);
     S.animFrame = requestAnimationFrame(gameLoop);
@@ -258,42 +287,44 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
   function endGame() {
     S.running = false; clearInterval(S.spawnTimer); cancelAnimationFrame(S.animFrame);
     typingInput.disabled = true;
-    $('#goStats').innerHTML = `<div>점수: ${S.score}</div><div>난이도: ${S.level}</div>`;
+    $('#goStats').innerHTML = `<div class="modal-stat">점수: ${S.score}</div><div class="modal-stat">난이도: ${LEVEL_LABELS[S.level]}</div><div class="modal-stat">최대콤보: ${S.maxCombo}</div>`;
     $('#goModal').classList.add('visible');
   }
 
-  /* --- 랭킹 시스템 --- */
-  function saveRank(nick) {
-    const ranks = JSON.parse(localStorage.getItem('church_ranks') || '[]');
-    ranks.push({ nick, score: S.score, level: S.level, ts: Date.now() });
-    ranks.sort((a,b) => b.score - a.score);
-    localStorage.setItem('church_ranks', JSON.stringify(ranks.slice(0, 10)));
+  function stopGame() {
+    S.running = false; clearInterval(S.spawnTimer); cancelAnimationFrame(S.animFrame);
+    wordZone.innerHTML = ''; S.words = [];
+    $('#startOverlay').classList.remove('hidden');
+    typingInput.disabled = true;
+    $('#btnStart').disabled = false; $('#btnPause').disabled = true; $('#btnStop').disabled = true;
+    updateUI();
   }
 
-  function showRanks() {
-    const ranks = JSON.parse(localStorage.getItem('church_ranks') || '[]');
-    $('#rkBody').innerHTML = ranks.map((r, i) => `<tr><td>${i+1}</td><td>${r.nick}</td><td>${r.score}</td><td>${r.level}</td></tr>`).join('');
-    $('#rkModal').classList.add('visible');
-  }
-
-  /* --- 이벤트 바인딩 --- */
+  /* --- Event Bindings --- */
   $('#btnStart').onclick = initGame;
-  $('#btnPause').onclick = () => { S.paused = !S.paused; $('#pauseOverlay').style.display = S.paused ? 'flex' : 'none'; };
-  $('#btnRanking').onclick = showRanks;
-  $('#rkClose').onclick = () => $('#rkModal').classList.remove('visible');
-  
-  // 랭킹 초기화 버튼 (관리자 전용)
+  $('#btnStop').onclick = stopGame;
+  $('#btnPause').onclick = () => {
+    S.paused = !S.paused;
+    $('#pauseOverlay').classList.toggle('visible', S.paused);
+    $('#btnPause').textContent = S.paused ? '▶ 계속' : '⏸ 일시정지';
+    if(!S.paused) { S.lastFrame = performance.now(); typingInput.focus(); }
+  };
+
+  $('#btnRanking').onclick = () => {
+    const ranks = JSON.parse(localStorage.getItem('church_ranks') || '[]');
+    $('#rkBody').innerHTML = ranks.length ? ranks.map((r, i) => `<tr><td>${i+1}</td><td>${r.nick}</td><td>${r.score}</td><td>${r.combo}</td><td>${LEVEL_LABELS[r.level] || r.level}</td></tr>`).join('') : '<tr><td colspan="5">기록이 없습니다</td></tr>';
+    $('#rkModal').classList.add('visible');
+  };
+
   $('#rkClear').onclick = () => {
     const pw = prompt("관리자 비밀번호를 입력하세요:");
     if (pw === ADMIN_PASSWORD) {
-      if (confirm("정말로 모든 랭킹을 초기화하시겠습니까?")) {
+      if (confirm("모든 랭킹을 초기화하시겠습니까?")) {
         localStorage.removeItem('church_ranks');
         alert("초기화되었습니다.");
-        showRanks();
+        $('#rkBody').innerHTML = '<tr><td colspan="5">기록이 없습니다</td></tr>';
       }
-    } else if (pw !== null) {
-      alert("비밀번호가 틀렸습니다.");
-    }
+    } else if (pw !== null) alert("비밀번호가 틀렸습니다.");
   };
 
   typingInput.onkeydown = e => {
@@ -302,26 +333,37 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
       const idx = S.words.findIndex(w => w.text === val);
       if (idx > -1) {
         const w = S.words[idx];
-        S.score += DIFF[S.level].score + (S.combo * 2);
         S.combo++;
-        wordZone.removeChild(w.el);
-        S.words.splice(idx, 1);
+        if(S.combo > S.maxCombo) S.maxCombo = S.combo;
+        S.score += DIFF[S.level].score * (w.isBonus ? 3 : 1) + (Math.floor(S.combo/5)*5);
+        wordZone.removeChild(w.el); S.words.splice(idx, 1);
       } else { S.combo = 0; }
-      typingInput.value = '';
-      updateUI();
+      typingInput.value = ''; updateUI();
     }
   };
 
   document.querySelectorAll('.diff-btn').forEach(btn => {
     btn.onclick = () => {
+      if(S.running) return;
       document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      S.level = btn.dataset.level;
+      btn.classList.add('active'); S.level = btn.dataset.level;
     };
   });
 
-  $('#goSave').onclick = () => { saveRank($('#goNick').value || '익명'); $('#goModal').classList.remove('visible'); showRanks(); $('#btnStart').disabled = false; };
-  $('#goSkip').onclick = () => { $('#goModal').classList.remove('visible'); $('#btnStart').disabled = false; };
+  $('#goSave').onclick = () => {
+    const ranks = JSON.parse(localStorage.getItem('church_ranks') || '[]');
+    ranks.push({ nick: $('#goNick').value || '익명', score: S.score, combo: S.maxCombo, level: S.level });
+    ranks.sort((a,b) => b.score - a.score);
+    localStorage.setItem('church_ranks', JSON.stringify(ranks.slice(0, 15)));
+    $('#goModal').classList.remove('visible'); stopGame(); $('#btnRanking').click();
+  };
+  $('#goSkip').onclick = () => { $('#goModal').classList.remove('visible'); stopGame(); };
+  $('#rkClose').onclick = () => $('#rkModal').classList.remove('visible');
+  
+  // 기타 UI
+  setInterval(() => { $('#headerVerse').textContent = VERSES[Math.floor(Math.random()*VERSES.length)]; }, 10000);
+  $('#btnFullscreen').onclick = () => { if(!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); };
+  $('#btnSound').onclick = () => { S.soundEnabled = !S.soundEnabled; $('#btnSound').textContent = S.soundEnabled ? '🔊' : '🔇'; };
 })();
 </script>
 </body>
